@@ -7,7 +7,7 @@ import gc
 import dshowcapture
 from math import hypot
 
-PRESENT_FRAME_WRITE_PATH = "Jiung/jiung.jpg"
+PRESENT_FRAME_WRITE_PATH = "Jiung\jiung.jpg"
 '''
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument("-i", "--ip", help="Set IP address for sending tracking data", default="127.0.0.1")
@@ -273,7 +273,6 @@ def run(fps=30, visualize = 0, dcap=None, use_dshowcapture=1, capture="0", log_d
 
                 if visualize != 0:
                     cv2.imwrite(PRESENT_FRAME_WRITE_PATH, frame) ## detection and save
-                    
                     if cv2.waitKey(1) & 0xFF == ord('q'):
                         break
                 failures = 0
