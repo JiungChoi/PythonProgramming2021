@@ -9,7 +9,7 @@ SCREEN_HEIGHT = 600
 PRESENT_FRAME_WRITE_PATH = "Jiung/jiung.jpg"
 GAMESTART_BUTTON_IMG = "button.png"
 BUTTON_START_HEIGHT = 100
-BUTTON_START_WIDTH = 300
+BUTTON_START_WIDTH = 400
 
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
@@ -22,6 +22,10 @@ class Button():
     def __init__(self,BUTTON_IMG_PATH):
         self.button = pygame.image.load(BUTTON_IMG_PATH)
         self.button = pygame.transform.scale(self.button,(BUTTON_START_WIDTH, BUTTON_START_HEIGHT))
+        self.rect = self.button.get_rect()
+        self.rect.x = SCREEN_WIDTH/2 - BUTTON_START_WIDTH/2
+        self.rect.y = SCREEN_HEIGHT/2 - BUTTON_START_HEIGHT/2
+        
     def pressed(self, mouse):
         if self.rect.collidepoint(mouse) == True:
             return True
@@ -65,12 +69,16 @@ class Game:
         self.gameIntroImgsChefs = pygame.transform.scale(pygame.image.load("chef.png"), self.gameIntroChefs[2])
         
 
-    def gameStrat(self):
+    def gameStart(self):
         for points in fc.run(visualize=1, max_threads=4, capture=0):
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.quitGame()
+
             self.gameBoard()
             
             self.SCREEN.blit(self.img, [0, 0])
-            self.SCREEN.blit(self.eagle_img, [100,100])
+            # self.SCREEN.blit(self.eagle_img, [100,100])
             
 
 
@@ -92,14 +100,15 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.quitGame()
-
-                #if gameStrartButton.pressed(pygame.MOUSEBUTTONDOWN) == True:
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.gameStrartButton.pressed(event.pos) == True:
+                        self.gameStart()
                 #    self.gameStart()
     
 
             self.SCREEN.blit(self.gameIntroImgs, self.gameIntroScreen[1])
             self.SCREEN.blit(self.gameIntroImgsChefs, self.gameIntroChefs[1])
-            self.SCREEN.blit(self.gameStrartButton.button, [0, 0])
+            self.SCREEN.blit(self.gameStrartButton.button, self.gameStrartButton.rect)
 
             pygame.display.update()
             self.clock.tick(15)
