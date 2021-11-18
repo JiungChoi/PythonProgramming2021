@@ -81,13 +81,13 @@ class Game:
                 if event.type == pygame.QUIT:
                     self.quitGame()
 
-            print(points)
+            #print(points)
             self.gameBoard()
             
             self.SCREEN.blit(self.img, [0, 0])
-            
-            
             pygame.display.update()
+
+
 
     def gameBoard(self):
         self.img = pygame.image.load(PRESENT_FRAME_WRITE_PATH)
