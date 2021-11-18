@@ -7,7 +7,7 @@ import gc
 import dshowcapture
 from math import hypot
 
-PRESENT_FRAME_WRITE_PATH = "Jiung\jiung.png"
+PRESENT_FRAME_WRITE_PATH = "Jiung/jiung.jpg"
 '''
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument("-i", "--ip", help="Set IP address for sending tracking data", default="127.0.0.1")
