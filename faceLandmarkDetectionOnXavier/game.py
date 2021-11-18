@@ -75,13 +75,12 @@ class Game:
                 if event.type == pygame.QUIT:
                     self.quitGame()
 
+            print(points)
             self.gameBoard()
             
             self.SCREEN.blit(self.img, [0, 0])
             # self.SCREEN.blit(self.eagle_img, [100,100])
             
-
-
             pygame.display.update()
 
     def gameBoard(self):
