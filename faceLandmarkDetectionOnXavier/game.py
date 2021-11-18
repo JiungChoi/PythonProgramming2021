@@ -109,7 +109,7 @@ class Game:
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if self.gameStrartButton.pressed(event.pos) == True:
                         self.gameStart()
-                #    self.gameStart()
+                
     
 
             self.SCREEN.blit(self.gameIntroImgs, self.gameIntroScreen[1])
