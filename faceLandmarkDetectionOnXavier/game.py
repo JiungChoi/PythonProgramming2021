@@ -6,7 +6,7 @@ import os, sys
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
-PRESENT_FRAME_WRITE_PATH = "Jiung/jiung.jpg"
+PRESENT_FRAME_WRITE_PATH = "Jiung/jiung.png"
 GAMESTART_BUTTON_IMG = "button.png"
 BUTTON_START_HEIGHT = 100
 BUTTON_START_WIDTH = 400
@@ -117,7 +117,7 @@ class Game:
 
     def run(self):
         # pygame initialize
-        pygame.init()
+        pygame.init() 
         self.clock = pygame.time.Clock()
         self.introFactor()
         self.getImgs()
