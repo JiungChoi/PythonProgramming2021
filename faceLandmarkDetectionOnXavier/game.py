@@ -24,8 +24,8 @@ class Button():
         self.button = pygame.image.load(BUTTON_IMG_PATH)
         self.button = pygame.transform.scale(self.button,(BUTTON_START_WIDTH, BUTTON_START_HEIGHT))
         self.rect = self.button.get_rect()
-        self.rect.x = SCREEN_WIDTH/2 - BUTTON_START_WIDTH/2
-        self.rect.y = SCREEN_HEIGHT/2 - BUTTON_START_HEIGHT/2
+        self.rect.x = game.SCREEN_WIDTH/2 - BUTTON_START_WIDTH/2
+        self.rect.y = game.SCREEN_HEIGHT/2 - BUTTON_START_HEIGHT/2
         
     def pressed(self, mouse):
         if self.rect.collidepoint(mouse) == True:
@@ -50,8 +50,8 @@ class minusElement(floatElement): # 실점 클래스(plus) : 부유물 객체로
 class Game:
     def __init__(self): # 게임 객체를 생성했을 때
         self.userName = input("Insert user info : ") # 유저의 이름을 입력받음
-        self.SCREEN_WIDTH = DEFAULT_SCREEN_WIDTH
-        self.SCREEN_HEIGHT = DEFAULT_SCREEN_HEIGHT
+        self.SCREEN_WIDTH = SCREEN_WIDTH_DEFAULT
+        self.SCREEN_HEIGHT = SCREEN_HEIGHT_DEFAULT
 
     ######### 환경 설정 #########
 
@@ -65,14 +65,14 @@ class Game:
 
     ######### 게임 요소 #########
     def gameFactor(self): # 이미지 파일들의 정보를 관리 : [경로, [x,y], (width, height))]
-        self.intro_gameScreen = ["gameIntro.png", [0, 0] , (SCREEN_WIDTH,SCREEN_HEIGHT)]
-        self.intro_chef = ["chef.png", [SCREEN_WIDTH/2 - 0.5*SCREEN_WIDTH/1.6,SCREEN_HEIGHT- SCREEN_HEIGHT/2], (SCREEN_WIDTH/1.6, SCREEN_HEIGHT/2)]
-        self.button = ["button.png", "NONE", (BUTTON_START_WIDTH, BUTTON_START_HEIGHT))]
+        self.intro_gameScreen = ["gameIntro.png", [0, 0] , (self.SCREEN_WIDTH,self.SCREEN_HEIGHT)]
+        self.intro_chef = ["chef.png", [self.SCREEN_WIDTH/2 - 0.5*self.SCREEN_WIDTH/1.6, self.SCREEN_HEIGHT- self.SCREEN_HEIGHT/2], (self.SCREEN_WIDTH/1.6, self.SCREEN_HEIGHT/2)]
+        self.button = ["button.png", "NONE", (BUTTON_START_WIDTH, BUTTON_START_HEIGHT)]
 
 
     def getImgs(self):
-        self.gameIntroImgs = pygame.transform.scale(pygame.image.load(intro_gameScreen[0]), self.gameIntroScreen[2])
-        self.gameIntroImgsChefs = pygame.transform.scale(pygame.image.load(intro_chef[0]), self.gameIntroChefs[2])
+        self.imgs_intro_gameScreen = pygame.transform.scale(pygame.image.load(self.intro_gameScreen[0]), self.intro_gameScreen[2])
+        self.imgs_intro_chef = pygame.transform.scale(pygame.image.load(self.intro_chef[0]), self.intro_chef[2])
         
     ######## 게임 스크린 ########
     def gameStart(self):
@@ -91,7 +91,7 @@ class Game:
 
     def gameBoard(self):
         self.img = pygame.image.load(PRESENT_FRAME_WRITE_PATH)
-        self.img = pygame.transform.scale(self.img, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.img = pygame.transform.scale(self.img, (self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
 
     def quitGame(self):
         pygame.quit()
@@ -112,8 +112,8 @@ class Game:
                 
     
 
-            self.SCREEN.blit(self.gameIntroImgs, self.gameIntroScreen[1])
-            self.SCREEN.blit(self.gameIntroImgsChefs, self.gameIntroChefs[1])
+            self.SCREEN.blit(self.imgs_intro_gameScreen, self.intro_gameScreen[1])
+            self.SCREEN.blit(self.imgs_intro_chef, self.intro_chef[1])
             self.SCREEN.blit(self.gameStrartButton.button, self.gameStrartButton.rect)
 
             pygame.display.update()
@@ -126,11 +126,11 @@ class Game:
         # pygame initialize
         pygame.init() 
         self.clock = pygame.time.Clock()
-        self.introFactor() 
+        self.gameFactor() 
         self.getImgs()
         
 
-        self.SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT)) 
+        self.SCREEN = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT)) 
         pygame.display.set_caption("Yam-Yam")
 
         self.event = pygame.event.poll()
