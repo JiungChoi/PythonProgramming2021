@@ -6,8 +6,10 @@ import traceback
 import gc
 import dshowcapture
 from math import hypot
+# import game
+stateGame = True
 
-PRESENT_FRAME_WRITE_PATH = "Jiung/jiung.jpg"
+PRESENT_FRAME_WRITE_PATH = "Jiung\jiung.jpg"
 '''
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument("-i", "--ip", help="Set IP address for sending tracking data", default="127.0.0.1")
@@ -107,8 +109,9 @@ from input_reader import InputReader, VideoReader, DShowCaptureReader, try_int
 from tracker import Tracker, get_model_base_path
 
 
+
 def run(fps=30, visualize = 0, dcap=None, use_dshowcapture=1, capture="0", log_data="",raw_rgb=0, width=800, height=600, video_out = None, face_id_offset = 0, video_scale=1, threshold=None, max_threads=max_threads, faces=1, discard_after=10, scan_every=3, silent=0, model=3, model_dir=None, gaze_tracking=1, detection_threshold=0.6, scan_retinaface=0, max_feature_updates=900, no_3d_adapt=1, try_hard=0, video_fps = 24, dump_points = ""):
-    
+     
     use_dshowcapture_flag = False
     if os.name == 'nt':
         use_dshowcapture_flag = True if use_dshowcapture == 1 else False
@@ -258,6 +261,7 @@ def run(fps=30, visualize = 0, dcap=None, use_dshowcapture=1, capture="0", log_d
                 if landmarks.size != 68:
                     landmarks = np.append(landmarks, np.zeros(68-landmarks.size), axis=0)
                 A_frame = np.vstack([A_frame, landmarks])
+                print(A_frame)
                 
                 if A_frame.size / 68 == 1:
                     yield A_frame
@@ -273,9 +277,10 @@ def run(fps=30, visualize = 0, dcap=None, use_dshowcapture=1, capture="0", log_d
 
                 if visualize != 0:
                     cv2.imwrite(PRESENT_FRAME_WRITE_PATH, frame) ## detection and save
+                    
                     if cv2.waitKey(1) & 0xFF == ord('q'):
                         break
-                failures = 0
+                
 
             except Exception as e:
                 if e.__class__ == KeyboardInterrupt:
