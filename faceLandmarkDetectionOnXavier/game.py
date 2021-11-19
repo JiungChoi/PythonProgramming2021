@@ -9,8 +9,10 @@ SCREEN_WIDTH_DEFAULT = 800
 SCREEN_HEIGHT_DEFAULT = 800
 INTRO_BUTTON_LARGE_HEIGHT = 100
 INTRO_BUTTON_LARGE_WIDTH = 400
-RUN_BUTTON_SMALL_HEIGHT = 25
-RUN_BUTTON_SMALL_WIDTH = 25
+RUN_BUTTON_SMALL_HEIGHT = 50
+RUN_BUTTON_SMALL_WIDTH = 50
+
+STOP = True
 
 #### COLOR ####
 BLACK = (0, 0, 0)
@@ -20,13 +22,17 @@ WHITE = (255, 255, 255)
 YELLOW = (255, 255, 0)
 
 class Button():
-    def __init__(self,BUTTON_IMG_PATH, x, y):
+    def __init__(self,BUTTON_IMG_PATH, x, y, w, h):
         self.button = pygame.image.load(BUTTON_IMG_PATH)
-        self.button = pygame.transform.scale(self.button,(INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT))
+        self.button = pygame.transform.scale(self.button,(w, h))
         self.rect = self.button.get_rect()
         self.rect.x = x
         self.rect.y = y
 
+    def switchImg(self, imgPath):
+        self.button = self.button = pygame.image.load(imgPath)
+        self.button = pygame.transform.scale(self.button, (self.rect.w, self.rect.h))
+        
     def pressed(self, mouse):
         if self.rect.collidepoint(mouse) == True:
             return True
@@ -67,24 +73,29 @@ class Game:
     def gameFactor(self): # 이미지 파일들의 정보를 관리 : [경로, [x,y], (width, height))]
         self.intro_gameScreenInfo = ["Images/intro_gameScreen.png", [0, 0] , (self.SCREEN_WIDTH,self.SCREEN_HEIGHT)]
         self.intro_chefInfo = ["Images/chef.png", [self.SCREEN_WIDTH/2 - 0.5*self.SCREEN_WIDTH/1.6, self.SCREEN_HEIGHT- self.SCREEN_HEIGHT/2], (self.SCREEN_WIDTH/1.6, self.SCREEN_HEIGHT/2)]
-        self.intro_gameStartButtonInfo = ["Images/intro_gameStrartButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
-        self.intro_gameSettingsButtonInfo = ["Images/intro_gameSettingsButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2 ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]        
-        self.run_menuButtonInfo = ["Images/run_menuButton.png", [self.SCREEN_WIDTH*3/5- RUN_BUTTON_SMALL_WIDTH/2, 0], (RUN_BUTTON_SMALL_WIDTH, RUN_BUTTON_SMALL_HEIGHT)]
-        #self.run_menuButtonInfo = ["run"]
-    
+        self.intro_gameStartButtonInfo = ["Images/intro_gameStrartButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2 - 2*INTRO_BUTTON_LARGE_HEIGHT ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
+        self.intro_gameSettingsButtonInfo = ["Images/intro_gameSettingsButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]        
+        self.intro_quitGameButtonInfo = ["Images/intro_quitGameButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]  
+
+        self.run_menuButtonInfo = ["Images/run_menuButton.png", [self.SCREEN_WIDTH-RUN_BUTTON_SMALL_WIDTH , 0], (RUN_BUTTON_SMALL_WIDTH, RUN_BUTTON_SMALL_HEIGHT)]
+        self.run_menuToIntroButtonInfo = ["Images/run_menuToIntroButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
+        self.run_menuCancelButtonInfo = ["Images/run_menuCancelButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2  ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
+        
     def getImgs(self):
         self.imgs_intro_gameScreenInfo = pygame.transform.scale(pygame.image.load(self.intro_gameScreenInfo[0]), self.intro_gameScreenInfo[2])
         self.imgs_intro_chefInfo = pygame.transform.scale(pygame.image.load(self.intro_chefInfo[0]), self.intro_chefInfo[2])
         
     
     def buttons_generate(self):
-        self.intro_gameStartButton = Button(self.intro_gameStartButtonInfo[0], self.intro_gameStartButtonInfo[1][0], self.intro_gameStartButtonInfo[1][1]) # 인트로 게임 시작 버튼 생성
-        self.intro_gameSettingsButton = Button(self.intro_gameSettingsButtonInfo[0], self.intro_gameSettingsButtonInfo[1][0], self.intro_gameSettingsButtonInfo[1][1]) #인트로 게임 설정 버튼 생성
-        self.run_menuButton = Button(self.run_menuButtonInfo[0], self.run_menuButtonInfo[1][0], self.run_menuButtonInfo[1][1] )
-    
+        self.intro_gameStartButton = Button(self.intro_gameStartButtonInfo[0], self.intro_gameStartButtonInfo[1][0], self.intro_gameStartButtonInfo[1][1], self.intro_gameStartButtonInfo[2][0], self.intro_gameStartButtonInfo[2][1]) # 인트로 게임 시작 버튼 생성
+        self.intro_gameSettingsButton = Button(self.intro_gameSettingsButtonInfo[0], self.intro_gameSettingsButtonInfo[1][0], self.intro_gameSettingsButtonInfo[1][1], self.intro_gameSettingsButtonInfo[2][0], self.intro_gameSettingsButtonInfo[2][1]) #인트로 게임 설정 버튼 생성
+        self.intro_quitGameButton = Button(self.intro_quitGameButtonInfo[0], self.intro_quitGameButtonInfo[1][0], self.intro_quitGameButtonInfo[1][1], self.intro_quitGameButtonInfo[2][0], self.intro_quitGameButtonInfo[2][1] )
+
+        self.run_menuButton = Button(self.run_menuButtonInfo[0], self.run_menuButtonInfo[1][0], self.run_menuButtonInfo[1][1], self.run_menuButtonInfo[2][0], self.run_menuButtonInfo[2][1] )
+        self.run_menuToIntroButton = Button(self.run_menuToIntroButtonInfo[0], self.run_menuToIntroButtonInfo[1][0], self.run_menuToIntroButtonInfo[1][1], self.run_menuToIntroButtonInfo[2][0], self.run_menuToIntroButtonInfo[2][1] )
+        self.run_menuCancelButton = Button(self.run_menuCancelButtonInfo[0], self.run_menuCancelButtonInfo[1][0], self.run_menuCancelButtonInfo[1][1], self.run_menuCancelButtonInfo[2][0], self.run_menuCancelButtonInfo[2][1] )
 
     ########## 게임 세팅 ##########
-
     def gameBoard(self):
         self.img = pygame.image.load(PRESENT_FRAME_WRITE_PATH)
         self.img = pygame.transform.scale(self.img, (self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
@@ -102,17 +113,29 @@ class Game:
                     self.quitGame()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if self.intro_gameStartButton.pressed(event.pos) == True:
-                        print("ok")
+                        self.intro_gameStartButton.switchImg("Images/intro_gameStrartButton_pressed.png")
+                    elif self.intro_gameSettingsButton.pressed(event.pos) == True:
+                        self.intro_gameSettingsButton.switchImg("Images/intro_gameSettingsButton_pressed.png")
+                    elif self.intro_quitGameButton.pressed(event.pos) == True:
+                        self.intro_quitGameButton.switchImg("Images/intro_quitGameButton_pressed.png")
+
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    self.intro_gameStartButton.switchImg("Images/intro_gameStrartButton.png")
+                    self.intro_gameSettingsButton.switchImg("Images/intro_gameSettingsButton.png")
+                    self.intro_quitGameButton.switchImg("Images/intro_quitGameButton.png")
+
+                    if self.intro_gameStartButton.pressed(event.pos) == True:
                         self.gameStart()
-                        
                     elif self.intro_gameSettingsButton.pressed(event.pos) == True:
                         print("기능 미구현")
-    
+                    elif self.intro_quitGameButton.pressed(event.pos) == True:
+                        self.quitGame()
 
             self.SCREEN.blit(self.imgs_intro_gameScreenInfo, self.intro_gameScreenInfo[1])
             self.SCREEN.blit(self.imgs_intro_chefInfo, self.intro_chefInfo[1])
             self.SCREEN.blit(self.intro_gameStartButton.button, self.intro_gameStartButtonInfo[1])
             self.SCREEN.blit(self.intro_gameSettingsButton.button, self.intro_gameSettingsButtonInfo[1])
+            self.SCREEN.blit(self.intro_quitGameButton.button, self.intro_quitGameButtonInfo[1])
             
 
             pygame.display.update()
@@ -125,8 +148,34 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.quitGame()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.run_menuButton.pressed(event.pos) == True:
+                        while STOP:
+                            self.SCREEN.blit(self.run_menuToIntroButton.button, self.run_menuToIntroButtonInfo[1])
+                            self.SCREEN.blit(self.run_menuCancelButton.button, self.run_menuCancelButtonInfo[1])
 
-            #print(points)
+                            for event in pygame.event.get():
+                                if event.type == pygame.QUIT:
+                                    self.quitGame()
+                                elif event.type == pygame.MOUSEBUTTONDOWN:
+                                    if self.run_menuToIntroButton.pressed(event.pos) == True:
+                                        self.run_menuToIntroButton.switchImg("Images/run_menuToIntroButton_pressed.png")
+                                    elif self.run_menuCancelButton.pressed(event.pos) == True:
+                                        self.run_menuCancelButton.switchImg("Images/run_menuCancelButton_pressed.png")
+
+                                elif event.type == pygame.MOUSEBUTTONUP:
+                                    if self.run_menuToIntroButton.pressed(event.pos) == True:
+                                        self.run_menuToIntroButton.switchImg("Images/run_menuToIntroButton.png")
+                                        self.introScreen()
+                                    elif self.run_menuCancelButton.pressed(event.pos) == True:
+                                        self.run_menuCancelButton.switchImg("Images/run_menuCancelButton.png")
+                                        break
+
+                            pygame.display.update()
+
+
+                
+            
             self.gameBoard()
             
             self.SCREEN.blit(self.img, [0, 0])
@@ -148,6 +197,7 @@ class Game:
 
         self.event = pygame.event.poll()
 
+        ## 게임 실행 첫 화면은 인트로로 실행
         self.introScreen()
         
             
