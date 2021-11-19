@@ -1,9 +1,9 @@
 import facetracker_custom as fc
 import pygame
 
-import os, sys
+import os, sys, time
 
-PRESENT_FRAME_WRITE_PATH = "Jiung\jiung.jpg"
+PRESENT_FRAME_WRITE_PATH = "Jiung\jiung.png"
 
 SCREEN_WIDTH_DEFAULT = 800
 SCREEN_HEIGHT_DEFAULT = 800
@@ -21,8 +21,28 @@ BLUE = (0, 0, 255)
 WHITE = (255, 255, 255)
 YELLOW = (255, 255, 0)
 
+class Life():
+    ## 메서드 오버로딩
+    def __init__(self):
+        self.life = 3
+    def __init__ (self, mode):
+        if mode == "easy":
+            self.life = 5
+        else: self.life =3
+    def minusLife (self):
+        self.life -= 1
+    
+class Score():
+    def __init__(self):
+        self.score = 0
+    def upScore(self, value):
+        self.score += value
+    def minusScore(self, value):
+        self.score -= value
+
+
 class Button():
-    def __init__(self,BUTTON_IMG_PATH, x, y, w, h):
+    def __init__(self, BUTTON_IMG_PATH, x, y, w, h):
         self.button = pygame.image.load(BUTTON_IMG_PATH)
         self.button = pygame.transform.scale(self.button,(w, h))
         self.rect = self.button.get_rect()
@@ -58,6 +78,7 @@ class Game:
         self.userName = input("Insert user info : ") # 유저의 이름을 입력받음
         self.SCREEN_WIDTH = SCREEN_WIDTH_DEFAULT
         self.SCREEN_HEIGHT = SCREEN_HEIGHT_DEFAULT
+        self.level = "easy"
 
     ########### 환경 설정 ###########
 
@@ -80,11 +101,14 @@ class Game:
         self.run_menuButtonInfo = ["Images/run_menuButton.png", [self.SCREEN_WIDTH-RUN_BUTTON_SMALL_WIDTH , 0], (RUN_BUTTON_SMALL_WIDTH, RUN_BUTTON_SMALL_HEIGHT)]
         self.run_menuToIntroButtonInfo = ["Images/run_menuToIntroButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
         self.run_menuCancelButtonInfo = ["Images/run_menuCancelButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2  ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
-        
+        self.run_lifeInfo = [["Images/heart1.png", "Images/heart2.png", "Images/heart3.png"], [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2  ], (RUN_BUTTON_SMALL_WIDTH, RUN_BUTTON_SMALL_HEIGHT)]
+
     def getImgs(self):
         self.imgs_intro_gameScreenInfo = pygame.transform.scale(pygame.image.load(self.intro_gameScreenInfo[0]), self.intro_gameScreenInfo[2])
         self.imgs_intro_chefInfo = pygame.transform.scale(pygame.image.load(self.intro_chefInfo[0]), self.intro_chefInfo[2])
-        
+        self.imgs_run_heart1 = pygame.transform.scale(pygame.image.load(self.run_lifeInfo[0][0]), self.run_lifeInfo[2])
+        self.imgs_run_heart2 = pygame.transform.scale(pygame.image.load(self.run_lifeInfo[0][1]), self.run_lifeInfo[2])
+        self.imgs_run_heart3 = pygame.transform.scale(pygame.image.load(self.run_lifeInfo[0][2]), self.run_lifeInfo[2])
     
     def buttons_generate(self):
         self.intro_gameStartButton = Button(self.intro_gameStartButtonInfo[0], self.intro_gameStartButtonInfo[1][0], self.intro_gameStartButtonInfo[1][1], self.intro_gameStartButtonInfo[2][0], self.intro_gameStartButtonInfo[2][1]) # 인트로 게임 시작 버튼 생성
@@ -108,6 +132,7 @@ class Game:
     def introScreen(self):
         intro = True
         while intro:
+            
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.quitGame()
@@ -139,11 +164,13 @@ class Game:
             
 
             pygame.display.update()
-            self.clock.tick(15)
+            self.clock.tick(20)
 
 
     ######## 게임 스크린 ########
     def gameStart(self):
+        startTime = time.time()
+
         for points in fc.run(visualize=1, max_threads=4, capture=0):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -165,6 +192,7 @@ class Game:
                                         self.run_menuCancelButton.switchImg("Images/run_menuCancelButton_pressed.png")
 
                                 elif event.type == pygame.MOUSEBUTTONUP:
+                                    pauseTime = time.time()
                                     self.run_menuToIntroButton.switchImg("Images/run_menuToIntroButton.png")
                                     self.run_menuCancelButton.switchImg("Images/run_menuCancelButton.png")
 
@@ -172,28 +200,42 @@ class Game:
                                         self.introScreen()
                                     elif self.run_menuCancelButton.pressed(event.pos) == True:
                                         STOP = False
+                                        startTime -= (time.time() - pauseTime) # 정지한 시간만큼 현재 시간 보정
+                                        
 
                             pygame.display.update()
 
                 
+            presentTime = (time.time() - startTime)//1 # 현재 시간 측정
+            self.timmerText = self.timmerFont.render(f"{60-int(presentTime)}", True, BLACK)
+            self.timmerTextRect = self.timmerText.get_rect() 
+            
             self.gameBoard()
             self.SCREEN.blit(self.img, [0, 0])
+            self.SCREEN.blit(self.timmerText, [self.SCREEN_WIDTH/2 - self.timmerTextRect.w/2, 0])
             self.SCREEN.blit(self.run_menuButton.button, self.run_menuButtonInfo[1])
+
+            if self.life.life == 3:
+                self.SCREEN.blit(self.imgs_run_heart1, self.run_life_Info[1]) 
+            elif self.life.life ==2:
+                self.SCREEN.blit(self.imgs_run_heart2, self.run_life_Info[1])
+            elif self.life.life ==1:
+                self.SCREEN.blit(self.imgs_run_heart3, self.run_life_Info[1])
             pygame.display.update()
 
     ######## 게임 프로그램 실행 ########
     def run(self):
-
         pygame.init() # 파이게임 라이브러리 초기 세팅
         self.clock = pygame.time.Clock() # timmer 사용을 위한 객체 생성 
         self.gameFactor()  # 어떤 요소를 만들지 선언
         self.getImgs() # gameFactor에서 선언한 요소의 이미지 파일을 불러들인다. [객체는 제외  Ex) Button ]
         self.buttons_generate() # 모든 버튼 생성 메서드
-
+        self.timmerFont = pygame.font.SysFont( 'impact', 70, False, False) # 시간을 화면에 출력해줄 폰트객체 생성
+        self.life = Life(self.level)
         self.SCREEN = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT)) # 스크린 객체 생성
         pygame.display.set_caption("Yam-Yam") # 게임 타이틀 선언
-
         self.event = pygame.event.poll() # 이벤트 객체 생성
+
 
         ## 게임 실행 첫 화면은 인트로로 실행
         self.introScreen()
