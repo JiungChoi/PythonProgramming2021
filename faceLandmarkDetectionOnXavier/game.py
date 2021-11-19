@@ -19,14 +19,16 @@ YELLOW = (255, 255, 0)
 
 
 
+
+
 class Button():
-    def __init__(self,BUTTON_IMG_PATH):
+    def __init__(self,BUTTON_IMG_PATH, x, y):
         self.button = pygame.image.load(BUTTON_IMG_PATH)
         self.button = pygame.transform.scale(self.button,(BUTTON_START_WIDTH, BUTTON_START_HEIGHT))
         self.rect = self.button.get_rect()
-        self.rect.x = game.SCREEN_WIDTH/2 - BUTTON_START_WIDTH/2
-        self.rect.y = game.SCREEN_HEIGHT/2 - BUTTON_START_HEIGHT/2
-        
+        self.rect.x = x
+        self.rect.y = y
+
     def pressed(self, mouse):
         if self.rect.collidepoint(mouse) == True:
             return True
@@ -53,7 +55,7 @@ class Game:
         self.SCREEN_WIDTH = SCREEN_WIDTH_DEFAULT
         self.SCREEN_HEIGHT = SCREEN_HEIGHT_DEFAULT
 
-    ######### 환경 설정 #########
+    ########### 환경 설정 ###########
 
     def windowSet(self, width, height): # 게임의 스크린 크기를 조정하고 싶을 때
         self.SCREEN_WIDTH = width 
@@ -63,17 +65,57 @@ class Game:
         self.userName = name
 
 
-    ######### 게임 요소 #########
+    ########### 게임 요소 ###########
     def gameFactor(self): # 이미지 파일들의 정보를 관리 : [경로, [x,y], (width, height))]
-        self.intro_gameScreen = ["gameIntro.png", [0, 0] , (self.SCREEN_WIDTH,self.SCREEN_HEIGHT)]
-        self.intro_chef = ["chef.png", [self.SCREEN_WIDTH/2 - 0.5*self.SCREEN_WIDTH/1.6, self.SCREEN_HEIGHT- self.SCREEN_HEIGHT/2], (self.SCREEN_WIDTH/1.6, self.SCREEN_HEIGHT/2)]
-        self.button = ["button.png", "NONE", (BUTTON_START_WIDTH, BUTTON_START_HEIGHT)]
-
+        self.intro_gameScreenInfo = ["intro_gameScreen.png", [0, 0] , (self.SCREEN_WIDTH,self.SCREEN_HEIGHT)]
+        self.intro_chefInfo = ["chef.png", [self.SCREEN_WIDTH/2 - 0.5*self.SCREEN_WIDTH/1.6, self.SCREEN_HEIGHT- self.SCREEN_HEIGHT/2], (self.SCREEN_WIDTH/1.6, self.SCREEN_HEIGHT/2)]
+        self.intro_gameStartButtonInfo = ["intro_gameStrartButton.png", [self.SCREEN_WIDTH/2 - BUTTON_START_WIDTH/2, self.SCREEN_HEIGHT/2 - BUTTON_START_HEIGHT/2 - BUTTON_START_HEIGHT ], (BUTTON_START_WIDTH, BUTTON_START_HEIGHT)]
+        self.intro_gameSettingsButtonInfo = ["intro_gameSettingsButton.png", [self.SCREEN_WIDTH/2 - BUTTON_START_WIDTH/2, self.SCREEN_HEIGHT/2 - BUTTON_START_HEIGHT/2 ], (BUTTON_START_WIDTH, BUTTON_START_HEIGHT)]        
 
     def getImgs(self):
-        self.imgs_intro_gameScreen = pygame.transform.scale(pygame.image.load(self.intro_gameScreen[0]), self.intro_gameScreen[2])
-        self.imgs_intro_chef = pygame.transform.scale(pygame.image.load(self.intro_chef[0]), self.intro_chef[2])
+        self.imgs_intro_gameScreenInfo = pygame.transform.scale(pygame.image.load(self.intro_gameScreenInfo[0]), self.intro_gameScreenInfo[2])
+        self.imgs_intro_chefInfo = pygame.transform.scale(pygame.image.load(self.intro_chefInfo[0]), self.intro_chefInfo[2])
         
+    
+    def buttons_generate(self):
+        self.intro_gameStartButton = Button(self.intro_gameStartButtonInfo[0], self.SCREEN_WIDTH/2 - BUTTON_START_WIDTH/2, self.SCREEN_HEIGHT/2 - BUTTON_START_HEIGHT/2- BUTTON_START_HEIGHT ) # 인트로 게임 시작 버튼 생성
+        self.intro_gameSettingsButton = Button(self.intro_gameSettingsButtonInfo[0], self.SCREEN_WIDTH/2 - BUTTON_START_WIDTH/2, self.SCREEN_HEIGHT/2 - BUTTON_START_HEIGHT/2   ) #인트로 게임 설정 버튼 생성
+
+    ########## 게임 세팅 ##########
+
+    def gameBoard(self):
+        self.img = pygame.image.load(PRESENT_FRAME_WRITE_PATH)
+        self.img = pygame.transform.scale(self.img, (self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
+
+    def quitGame(self):
+        pygame.quit()
+        sys.exit()
+
+    ########## 게임 인트로 ##########
+    def introScreen(self):
+        intro = True
+        while intro:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.quitGame()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.intro_gameStartButton.pressed(event.pos) == True:
+                        print("ok")
+                        self.gameStart()
+                        
+                    elif self.intro_gameSettingsButton.pressed(event.pos) == True:
+                        print("기능 미구현")
+    
+
+            self.SCREEN.blit(self.imgs_intro_gameScreenInfo, self.intro_gameScreenInfo[1])
+            self.SCREEN.blit(self.imgs_intro_chefInfo, self.intro_chefInfo[1])
+            self.SCREEN.blit(self.intro_gameStartButton.button, self.intro_gameStartButtonInfo[1])
+            self.SCREEN.blit(self.intro_gameSettingsButton.button, self.intro_gameSettingsButtonInfo[1])
+
+            pygame.display.update()
+            self.clock.tick(15)
+
+
     ######## 게임 스크린 ########
     def gameStart(self):
         for points in fc.run(visualize=1, max_threads=4, capture=0):
@@ -87,48 +129,14 @@ class Game:
             self.SCREEN.blit(self.img, [0, 0])
             pygame.display.update()
 
-
-
-    def gameBoard(self):
-        self.img = pygame.image.load(PRESENT_FRAME_WRITE_PATH)
-        self.img = pygame.transform.scale(self.img, (self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
-
-    def quitGame(self):
-        pygame.quit()
-        sys.exit()
-
-    ######## 게임 첫 화면 ########
-    def introScreen(self):
-        intro = True
-
-        self.gameStrartButton = Button(self.button[0]) # 버튼 생성
-        while intro:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.quitGame()
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if self.gameStrartButton.pressed(event.pos) == True:
-                        self.gameStart()
-                
-    
-
-            self.SCREEN.blit(self.imgs_intro_gameScreen, self.intro_gameScreen[1])
-            self.SCREEN.blit(self.imgs_intro_chef, self.intro_chef[1])
-            self.SCREEN.blit(self.gameStrartButton.button, self.gameStrartButton.rect)
-
-            pygame.display.update()
-            self.clock.tick(15)
-            
-        
-
-
+    ######## 게임 프로그램 실행 ########
     def run(self):
-        # pygame initialize
-        pygame.init() 
-        self.clock = pygame.time.Clock()
-        self.gameFactor() 
+
+        pygame.init() # 파이게임 라이브러리 초기 세팅
+        self.clock = pygame.time.Clock() # timmer 사용을 위한 객체 생성 
+        self.gameFactor()  
         self.getImgs()
-        
+        self.buttons_generate()
 
         self.SCREEN = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT)) 
         pygame.display.set_caption("Yam-Yam")
