@@ -150,6 +150,7 @@ class Game:
                     self.quitGame()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if self.run_menuButton.pressed(event.pos) == True:
+                        STOP = True
                         while STOP:
                             self.SCREEN.blit(self.run_menuToIntroButton.button, self.run_menuToIntroButtonInfo[1])
                             self.SCREEN.blit(self.run_menuCancelButton.button, self.run_menuCancelButtonInfo[1])
@@ -164,23 +165,21 @@ class Game:
                                         self.run_menuCancelButton.switchImg("Images/run_menuCancelButton_pressed.png")
 
                                 elif event.type == pygame.MOUSEBUTTONUP:
+                                    self.run_menuToIntroButton.switchImg("Images/run_menuToIntroButton.png")
+                                    self.run_menuCancelButton.switchImg("Images/run_menuCancelButton.png")
+
                                     if self.run_menuToIntroButton.pressed(event.pos) == True:
-                                        self.run_menuToIntroButton.switchImg("Images/run_menuToIntroButton.png")
                                         self.introScreen()
                                     elif self.run_menuCancelButton.pressed(event.pos) == True:
-                                        self.run_menuCancelButton.switchImg("Images/run_menuCancelButton.png")
-                                        break
+                                        STOP = False
 
                             pygame.display.update()
 
 
                 
-            
             self.gameBoard()
-            
             self.SCREEN.blit(self.img, [0, 0])
             self.SCREEN.blit(self.run_menuButton.button, self.run_menuButtonInfo[1])
-            
             pygame.display.update()
 
     ######## 게임 프로그램 실행 ########
@@ -190,12 +189,12 @@ class Game:
         self.clock = pygame.time.Clock() # timmer 사용을 위한 객체 생성 
         self.gameFactor()  # 어떤 요소를 만들지 선언
         self.getImgs() # gameFactor에서 선언한 요소의 이미지 파일을 불러들인다. [객체는 제외  Ex) Button ]
-        self.buttons_generate() # 버튼 생성 메서드
+        self.buttons_generate() # 모든 버튼 생성 메서드
 
-        self.SCREEN = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT)) 
-        pygame.display.set_caption("Yam-Yam")
+        self.SCREEN = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT)) # 스크린 객체 생성
+        pygame.display.set_caption("Yam-Yam") # 게임 타이틀 선언
 
-        self.event = pygame.event.poll()
+        self.event = pygame.event.poll() # 이벤트 객체 생성
 
         ## 게임 실행 첫 화면은 인트로로 실행
         self.introScreen()
