@@ -261,7 +261,7 @@ def run(fps=30, visualize = 0, dcap=None, use_dshowcapture=1, capture="0", log_d
                 if landmarks.size != 68:
                     landmarks = np.append(landmarks, np.zeros(68-landmarks.size), axis=0)
                 A_frame = np.vstack([A_frame, landmarks])
-                print(A_frame)
+                #print(A_frame)
                 
                 if A_frame.size / 68 == 1:
                     yield A_frame
