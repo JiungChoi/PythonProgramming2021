@@ -9,7 +9,7 @@ from math import hypot
 # import game
 stateGame = True
 
-PRESENT_FRAME_WRITE_PATH = "Jiung\jiung.jpg"
+PRESENT_FRAME_WRITE_PATH = "Jiung\jiung.png"
 '''
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument("-i", "--ip", help="Set IP address for sending tracking data", default="127.0.0.1")
