@@ -175,7 +175,6 @@ class Game:
 
                             pygame.display.update()
 
-
                 
             self.gameBoard()
             self.SCREEN.blit(self.img, [0, 0])
@@ -200,8 +199,6 @@ class Game:
         self.introScreen()
         
             
-            
-
             
 
 
