@@ -9,6 +9,9 @@ SCREEN_WIDTH_DEFAULT = 800
 SCREEN_HEIGHT_DEFAULT = 800
 INTRO_BUTTON_LARGE_HEIGHT = 100
 INTRO_BUTTON_LARGE_WIDTH = 400
+RUN_BUTTON_MID_HEIGHT = 100
+RUN_BUTTON_MID_WIDTH = 200
+
 RUN_BUTTON_SMALL_HEIGHT = 50
 RUN_BUTTON_SMALL_WIDTH = 50
 
@@ -22,13 +25,8 @@ WHITE = (255, 255, 255)
 YELLOW = (255, 255, 0)
 
 class Life():
-    ## 메서드 오버로딩
     def __init__(self):
         self.life = 3
-    def __init__ (self, mode):
-        if mode == "easy":
-            self.life = 5
-        else: self.life =3
     def minusLife (self):
         self.life -= 1
     
@@ -101,7 +99,7 @@ class Game:
         self.run_menuButtonInfo = ["Images/run_menuButton.png", [self.SCREEN_WIDTH-RUN_BUTTON_SMALL_WIDTH , 0], (RUN_BUTTON_SMALL_WIDTH, RUN_BUTTON_SMALL_HEIGHT)]
         self.run_menuToIntroButtonInfo = ["Images/run_menuToIntroButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
         self.run_menuCancelButtonInfo = ["Images/run_menuCancelButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2  ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
-        self.run_lifeInfo = [["Images/heart1.png", "Images/heart2.png", "Images/heart3.png"], [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2  ], (RUN_BUTTON_SMALL_WIDTH, RUN_BUTTON_SMALL_HEIGHT)]
+        self.run_lifeInfo = [["Images/heart1.png", "Images/heart2.png", "Images/heart3.png"], [0, 0], (RUN_BUTTON_MID_WIDTH, RUN_BUTTON_MID_HEIGHT)]
 
     def getImgs(self):
         self.imgs_intro_gameScreenInfo = pygame.transform.scale(pygame.image.load(self.intro_gameScreenInfo[0]), self.intro_gameScreenInfo[2])
@@ -215,12 +213,14 @@ class Game:
             self.SCREEN.blit(self.timmerText, [self.SCREEN_WIDTH/2 - self.timmerTextRect.w/2, 0])
             self.SCREEN.blit(self.run_menuButton.button, self.run_menuButtonInfo[1])
 
+            print(self.life.life)
             if self.life.life == 3:
-                self.SCREEN.blit(self.imgs_run_heart1, self.run_life_Info[1]) 
+                self.SCREEN.blit(self.imgs_run_heart3, self.run_lifeInfo[1]) 
             elif self.life.life ==2:
-                self.SCREEN.blit(self.imgs_run_heart2, self.run_life_Info[1])
+                self.SCREEN.blit(self.imgs_run_heart2, self.run_lifeInfo[1])
             elif self.life.life ==1:
-                self.SCREEN.blit(self.imgs_run_heart3, self.run_life_Info[1])
+                self.SCREEN.blit(self.imgs_run_heart1, self.run_lifeInfo[1])
+
             pygame.display.update()
 
     ######## 게임 프로그램 실행 ########
@@ -231,7 +231,7 @@ class Game:
         self.getImgs() # gameFactor에서 선언한 요소의 이미지 파일을 불러들인다. [객체는 제외  Ex) Button ]
         self.buttons_generate() # 모든 버튼 생성 메서드
         self.timmerFont = pygame.font.SysFont( 'impact', 70, False, False) # 시간을 화면에 출력해줄 폰트객체 생성
-        self.life = Life(self.level)
+        self.life = Life()
         self.SCREEN = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT)) # 스크린 객체 생성
         pygame.display.set_caption("Yam-Yam") # 게임 타이틀 선언
         self.event = pygame.event.poll() # 이벤트 객체 생성
