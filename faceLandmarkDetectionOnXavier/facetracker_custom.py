@@ -110,7 +110,7 @@ from tracker import Tracker, get_model_base_path
 
 
 
-def run(fps=30, visualize = 0, dcap=None, use_dshowcapture=1, capture="0", log_data="",raw_rgb=0, width=800, height=600, video_out = None, face_id_offset = 0, video_scale=1, threshold=None, max_threads=max_threads, faces=1, discard_after=10, scan_every=3, silent=0, model=3, model_dir=None, gaze_tracking=1, detection_threshold=0.6, scan_retinaface=0, max_feature_updates=900, no_3d_adapt=1, try_hard=0, video_fps = 24, dump_points = ""):
+def run(fps=30, visualize = 0, dcap=None, use_dshowcapture=1, capture="0", log_data="",raw_rgb=0, width=600, height=600, video_out = None, face_id_offset = 0, video_scale=1, threshold=None, max_threads=max_threads, faces=1, discard_after=10, scan_every=3, silent=0, model=3, model_dir=None, gaze_tracking=1, detection_threshold=0.6, scan_retinaface=0, max_feature_updates=900, no_3d_adapt=1, try_hard=0, video_fps = 24, dump_points = ""):
      
     use_dshowcapture_flag = False
     if os.name == 'nt':
@@ -161,7 +161,7 @@ def run(fps=30, visualize = 0, dcap=None, use_dshowcapture=1, capture="0", log_d
         need_reinit = 0
         failures = 0
         source_name = input_reader.name
-        A_frame = np.empty((0, 68), dtype=int)
+        A_frame = np.empty((0, 136), dtype=int)
         while input_reader.is_open():
             if not input_reader.is_open() or need_reinit == 1:
                 input_reader = InputReader(capture, raw_rgb, width, height, fps, use_dshowcapture=use_dshowcapture_flag, dcap=dcap)
@@ -208,7 +208,7 @@ def run(fps=30, visualize = 0, dcap=None, use_dshowcapture=1, capture="0", log_d
                     tracking_time += inference_time / len(faces)
                     tracking_frames += 1
                 detected = False
-                landmarks = np.array([], int) # landmarks in a frame
+                landmarks = [] # landmarks in a frame
                 for face_num, f in enumerate(faces):
                     f = copy.copy(f)
                     f.id += face_id_offset
@@ -228,8 +228,10 @@ def run(fps=30, visualize = 0, dcap=None, use_dshowcapture=1, capture="0", log_d
                         if pt_num == 67 and (f.eye_blink[1] < 0.30 or c < 0.20):
                             continue
                         y = int(y + 0.5)
+                        x = int(x + 0.5)
+                        ################################### spot1 
+                        landmarks.append([(width-y), x])
                         
-                        landmarks = np.append(landmarks, [y], axis=0)
                         if visualize != 0 or not out is None:
                             color = (0, 255, 0)
                             if pt_num >= 66:
@@ -258,14 +260,13 @@ def run(fps=30, visualize = 0, dcap=None, use_dshowcapture=1, capture="0", log_d
                         log.flush()
 
                 
-                if landmarks.size != 68:
-                    landmarks = np.append(landmarks, np.zeros(68-landmarks.size), axis=0)
-                A_frame = np.vstack([A_frame, landmarks])
-                #print(A_frame)
-                
-                if A_frame.size / 68 == 1:
-                    yield A_frame
-                    A_frame = np.empty((0, 68), dtype=int)
+                if len(landmarks) / 68 == 1:
+                    cv2.circle(frame, (width - landmarks[58][0], landmarks[58][1]), radius = 5, color = (255, 0, 0))
+                    cv2.circle(frame, (width - landmarks[62][0], landmarks[62][1]), radius = 5, color = (255, 0, 0))
+                    cv2.circle(frame, (width - landmarks[50][0], landmarks[50][1]), radius = 5, color = (255, 0, 0))
+                    cv2.circle(frame, (width - landmarks[55][0], landmarks[55][1]), radius = 5, color = (255, 0, 0))
+                    yield landmarks
+                    landmarks = []
 
                 if not out is None:
                     video_frame = frame
@@ -276,6 +277,8 @@ def run(fps=30, visualize = 0, dcap=None, use_dshowcapture=1, capture="0", log_d
                         del video_frame
 
                 if visualize != 0:
+                    frame = cv2.flip(frame, 1)
+                    
                     cv2.imwrite(PRESENT_FRAME_WRITE_PATH, frame) ## detection and save
                     
                     if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -323,4 +326,4 @@ def run(fps=30, visualize = 0, dcap=None, use_dshowcapture=1, capture="0", log_d
 
 if __name__ == "__main__":
     frame = run(visualize=1, max_threads=4, capture="video.mp4")
-    print(frame, frame.size)
+    
