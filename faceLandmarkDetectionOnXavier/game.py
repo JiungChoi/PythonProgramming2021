@@ -1,7 +1,7 @@
 import facetracker_custom as fc
 import pygame
 
-import os, sys, time
+import os, sys, time, random
 
 PRESENT_FRAME_WRITE_PATH = "Jiung\jiung.png"
 
@@ -55,21 +55,24 @@ class Button():
         if self.rect.collidepoint(mouse) == True:
             return True
 
-class floatElement: # 부유물 클래스: 점수 클래스(plus)와, 실점(minus) 클래스로 상속한다. 
-    def __init__(self, x, y):
-        self.x = x # x좌표
-        self.y = y # y좌표
+class FloatElement: # 부유물 클래스: 점수 클래스(plus)와, 실점(minus) 클래스로 상속한다. 
+    def __init__(self,Floatter_IMG_PATH, w, h):
+        self.floatter = pygame.image.load(Floatter_IMG_PATH)
+        self.floatter = pygame.transform.scale(self.floatter,(w, h))
+        self.rect = self.floatter.get_rect()
+        self.rect.x = random.randint(0, game.SCREEN_WIDTH - w)
+        self.rect.y = random.randint(0, game.SCREEN_HEIGHT - h)
+        
 
-class plusElement(floatElement): # 점수 클래스(plus) : 부유물 객체로 부터 상속 받는다. 
-    def __init__(self, imgPath, x, y):
-        super().__init__(x, y)
-        self.img = imgPath # img의 경로
+class PlusElement(FloatElement): # 점수 클래스(plus) : 부유물 객체로 부터 상속 받는다. 
+    def __init__(self, Floatter_IMG_PATH, w, h):
+        super().__init__(Floatter_IMG_PATH, w, h)
+        
 
-class minusElement(floatElement): # 실점 클래스(plus) : 부유물 객체로 부터 상속 받는다.
-    def __init__(self, imgPath, x, y):
-        super().__init__(x, y)
-        self.img = imgPath # img의 경로
-
+class MinusElement(FloatElement): # 실점 클래스(plus) : 부유물 객체로 부터 상속 받는다.
+    def __init__(self, Floatter_IMG_PATH, w, h):
+        super().__init__(Floatter_IMG_PATH, w, h)
+ 
 
 class Game:
     def __init__(self): # 게임 객체를 생성했을 때
@@ -77,6 +80,7 @@ class Game:
         self.SCREEN_WIDTH = SCREEN_WIDTH_DEFAULT
         self.SCREEN_HEIGHT = SCREEN_HEIGHT_DEFAULT
         self.level = "easy"
+        self.floatElements = [[],[]]
 
     ########### 환경 설정 ###########
 
@@ -100,6 +104,11 @@ class Game:
         self.run_menuToIntroButtonInfo = ["Images/run_menuToIntroButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
         self.run_menuCancelButtonInfo = ["Images/run_menuCancelButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2  ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
         self.run_lifeInfo = [["Images/heart1.png", "Images/heart2.png", "Images/heart3.png"], [0, 0], (RUN_BUTTON_MID_WIDTH, RUN_BUTTON_MID_HEIGHT)]
+
+        ## Game의 부유물 객체 관리
+        self.run_plusElementInfo = [["Images/apple.png", "Images/beef.png"], [0, 0], (RUN_BUTTON_MID_WIDTH, RUN_BUTTON_MID_HEIGHT)]
+        self.run_minusElementInfo = [["Images/cucumber.png"], [0, 0] , (RUN_BUTTON_MID_WIDTH, RUN_BUTTON_MID_HEIGHT)]
+
 
     def getImgs(self):
         self.imgs_intro_gameScreenInfo = pygame.transform.scale(pygame.image.load(self.intro_gameScreenInfo[0]), self.intro_gameScreenInfo[2])
@@ -149,6 +158,7 @@ class Game:
 
                     if self.intro_gameStartButton.pressed(event.pos) == True:
                         self.gameStart()
+                        
                     elif self.intro_gameSettingsButton.pressed(event.pos) == True:
                         print("기능 미구현")
                     elif self.intro_quitGameButton.pressed(event.pos) == True:
@@ -203,17 +213,31 @@ class Game:
 
                             pygame.display.update()
 
-                
             presentTime = (time.time() - startTime)//1 # 현재 시간 측정
+            if ((time.time() - startTime)%1 <0.1): # 1초에 2번 부유물 객체 생성
+                self.floatElements[0].append(PlusElement(self.run_plusElementInfo[0][random.randrange(0, 2)], self.run_plusElementInfo[2][0], self.run_plusElementInfo[2][1]))
+                if( len(self.floatElements[0])>=7 and (len(self.floatElements[0])%7 ==0)): ## 플러스요소 7개 생성당 1개의 마이너스 요소
+                    self.floatElements[1].append(MinusElement(self.run_minusElementInfo[0][random.randrange(0, 1)], self.run_minusElementInfo[2][0], self.run_minusElementInfo[2][1]))
+            
+
             self.timmerText = self.timmerFont.render(f"{60-int(presentTime)}", True, BLACK)
             self.timmerTextRect = self.timmerText.get_rect() 
             
+
+            ## 게임중 추가 요소는 배경 생성 후 추가해줄 것
             self.gameBoard()
-            self.SCREEN.blit(self.img, [0, 0])
+            self.SCREEN.blit(self.img, [0, 0]) # 배경
             self.SCREEN.blit(self.timmerText, [self.SCREEN_WIDTH/2 - self.timmerTextRect.w/2, 0])
             self.SCREEN.blit(self.run_menuButton.button, self.run_menuButtonInfo[1])
+            
+            for element in self.floatElements[0]:
+                self.SCREEN.blit(element.floatter, (element.rect.x, element.rect.y))
+            for element in self.floatElements[1]:
+                self.SCREEN.blit(element.floatter, (element.rect.x, element.rect.y))
+                print("here")
+                
 
-            print(self.life.life)
+
             if self.life.life == 3:
                 self.SCREEN.blit(self.imgs_run_heart3, self.run_lifeInfo[1]) 
             elif self.life.life ==2:
@@ -231,10 +255,11 @@ class Game:
         self.getImgs() # gameFactor에서 선언한 요소의 이미지 파일을 불러들인다. [객체는 제외  Ex) Button ]
         self.buttons_generate() # 모든 버튼 생성 메서드
         self.timmerFont = pygame.font.SysFont( 'impact', 70, False, False) # 시간을 화면에 출력해줄 폰트객체 생성
-        self.life = Life()
+        self.life = Life() 
         self.SCREEN = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT)) # 스크린 객체 생성
         pygame.display.set_caption("Yam-Yam") # 게임 타이틀 선언
         self.event = pygame.event.poll() # 이벤트 객체 생성
+        
 
 
         ## 게임 실행 첫 화면은 인트로로 실행
