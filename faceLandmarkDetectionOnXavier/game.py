@@ -58,7 +58,6 @@ class Button():
 class FloatElement: # 부유물 클래스: 점수 클래스(plus)와, 실점(minus) 클래스로 상속한다. 
     def __init__(self,Floatter_IMG_PATH, w, h):
         self.floatter = pygame.image.load(Floatter_IMG_PATH)
-        self.type = "apple" if Floatter_IMG_PATH = "Images/apple.png" else "beef" if Floatter_IMG_PATH == "Images/beef.png" else "NONE"
         self.floatter = pygame.transform.scale(self.floatter,(w, h))
         self.rect = self.floatter.get_rect()
         self.rect.x = random.randint(0, game.SCREEN_WIDTH - w)
@@ -246,8 +245,6 @@ class Game:
             ## 먹은지 안 먹은지 검출
             for element in self.floatElements[0]:
                 if (self.isInYourMouth(True , points, element)):
-                    #if element.type == "apple": gameScore.upScore(300)
-                    #elif element.type == "beef" : gameScore.upSore(500)
                     self.floatElements[0].remove(element)
             
             for element in self.floatElements[1]:
