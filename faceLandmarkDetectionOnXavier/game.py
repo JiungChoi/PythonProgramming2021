@@ -620,8 +620,8 @@ class Game:
             if ((time.time() - startTime)%1 <0.1): # 1초에 2번 부유물 객체 생성
                 plusOrMinus = random.randrange(100)
                 if plusOrMinus < 80: # 2:8 = (minus:plus) 의 비율로 부유물 객체 생성 
-                    #self.floatElements[0].append(PlusElement(self.run_plusElementInfo[0][random.randrange(0, 2)], self.run_plusElementInfo[2][0], self.run_plusElementInfo[2][1]))
-                    self.floatElements[0].append(PlusElement(self.run_plusElementInfo[0][2], self.run_plusElementInfo[2][0], self.run_plusElementInfo[2][1]))
+                    self.floatElements[0].append(PlusElement(self.run_plusElementInfo[0][random.randrange(0, 2)], self.run_plusElementInfo[2][0], self.run_plusElementInfo[2][1]))
+                    #self.floatElements[0].append(PlusElement(self.run_plusElementInfo[0][2], self.run_plusElementInfo[2][0], self.run_plusElementInfo[2][1]))
         
                 elif 80<= plusOrMinus  <90:
                     self.floatElements[1].append(MinusElement(self.run_minusElementInfo[0][random.randrange(0, 1)], self.run_minusElementInfo[2][0], self.run_minusElementInfo[2][1]))
