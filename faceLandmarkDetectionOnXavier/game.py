@@ -81,6 +81,8 @@ class FloatElement: # 부유물 클래스: 점수 클래스(plus)와, 실점(min
             self.type = "beef"
         elif Floatter_IMG_PATH == "Images/cucumber.png":
             self.type = "cucumber"
+        elif Floatter_IMG_PATH == "Images/goldApple.png":
+            self.type = "goldApple"
 
     def randomMove(self):
         
@@ -122,19 +124,19 @@ class FloatElement: # 부유물 클래스: 점수 클래스(plus)와, 실점(min
             self.moveDir[1] = 1
         
          
-                 
-
-
 class PlusElement(FloatElement): # 점수 클래스(plus) : 부유물 객체로 부터 상속 받는다. 
     def __init__(self, Floatter_IMG_PATH, w, h):
         super().__init__(Floatter_IMG_PATH, w, h)
+        self.DOUBLE_MODE = False 
     def eat(self):
         if self.type == "medicine.png":
             pass
         elif self.type == "apple":
-            game.score.upScore(SCORE_APPLE)
+            game.score.upScore(SCORE_APPLE) if not self.DOUBLE_MODE else game.score.upScore(2*SCORE_APPLE)
         elif self.type == "beef":
-            game.score.upScore(SCORE_BEEF)
+            game.score.upScore(SCORE_BEEF) if not self.DOUBLE_MODE else game.score.upScore(2*SCORE_BEEF)
+        elif self.type == "goldApple":
+            self.DOUBLE_MODE = True
         
 
 class MinusElement(FloatElement): # 실점 클래스(plus) : 부유물 객체로 부터 상속 받는다.
@@ -317,19 +319,22 @@ class Game:
 
                     if self.run_menuToIntroButton.pressed(event.pos) == True:
                         STOP = False
-                        self.floatElements = [[], []]
-                        self.score.score = 0
-                        self.life.life = 3
+                        self.gameFactorClear()
                         self.introScreen()
 
                     elif self.run_menuCancelButton.pressed(event.pos) == True:
                         STOP = False
-                        self.floatElements = [[], []]
-                        self.life.life = 3
-                        self.score.score = 0
+                        self.gameFactorClear()
                         self.gameStart()
                         
             pygame.display.update()
+
+    def gameFactorClear(self):
+        STOP = False
+        self.floatElements = [[], []]
+        self.life.life = 3
+        self.score.score = 0
+        
 
     def gameStart(self):
         STOP = True
@@ -375,9 +380,7 @@ class Game:
                                     self.run_menuCancelButton.switchImg("Images/run_menuCancelButton.png")
 
                                     if self.run_menuToIntroButton.pressed(event.pos) == True:
-                                        self.life.life = 3
-                                        self.score.score = 0
-                                        self.floatElements = [[], []]
+                                        self.gameFactorClear()
                                         self.introScreen()
 
                                     elif self.run_menuCancelButton.pressed(event.pos) == True:
