@@ -9,10 +9,10 @@ SCREEN_WIDTH_DEFAULT = 600
 SCREEN_HEIGHT_DEFAULT = 600
 INTRO_BUTTON_LARGE_WIDTH = SCREEN_WIDTH_DEFAULT*0.3
 INTRO_BUTTON_LARGE_HEIGHT = SCREEN_HEIGHT_DEFAULT*0.1
-RUN_BUTTON_MID_WIDTH = SCREEN_WIDTH_DEFAULT/6
-RUN_BUTTON_MID_HEIGHT = SCREEN_WIDTH_DEFAULT/10
-RUN_BUTTON_SMALL_WIDTH = SCREEN_WIDTH_DEFAULT*0.2
-RUN_BUTTON_SMALL_HEIGHT = SCREEN_HEIGHT_DEFAULT*0.2
+RUN_BUTTON_MID_WIDTH = SCREEN_WIDTH_DEFAULT*0.2
+RUN_BUTTON_MID_HEIGHT = SCREEN_WIDTH_DEFAULT*0.2
+RUN_BUTTON_SMALL_WIDTH = SCREEN_WIDTH_DEFAULT*0.15
+RUN_BUTTON_SMALL_HEIGHT = SCREEN_HEIGHT_DEFAULT*0.15
 RUN_BUTTON_FIRE_WIDTH = SCREEN_WIDTH_DEFAULT*0.1
 RUN_BUTTON_FIRE_HEIGHT = SCREEN_HEIGHT_DEFAULT*0.1
 
@@ -87,44 +87,82 @@ class FloatElement: # 부유물 클래스: 점수 클래스(plus)와, 실점(min
         elif Floatter_IMG_PATH == "Images/redMushroom.png":
             self.type = "redMushroom"
 
+    ##모드에 따라 다른 이동
     def randomMove(self):
         
-        ## 난이도가 hard 일 때 적용
-        '''
-        self.rect.x += random.randrange(31) - 15 # move : -15 ~ 15 
-        self.rect.y += random.randrange(11) - 5 # move : -5 ~ 5
-        if self.rect.x >= game.SCREEN_WIDTH: self.rect.x -= 15
-        if self.rect.y >= game.SCREEN_HEIGHT: self.rect.y -= 5 
-        '''
-        ## 랜덤한 속도로 이동
-        if self.moveDir == [0, 0] :
-            self.rect.x -= random.randrange(11)
-            self.rect.y -= random.randrange(11) 
-        elif self.moveDir == [0, 1] :
-            self.rect.x -= random.randrange(11)
-            self.rect.y += random.randrange(11)
-        elif self.moveDir == [1, 0]:
-            self.rect.x += random.randrange(11)
-            self.rect.y -= random.randrange(11) 
-        elif self.moveDir == [1, 1] :
-            self.rect.x += random.randrange(11)
-            self.rect.y += random.randrange(11)
+        # 난이도 easy
+        if game.gameMode == "easy":
+            self.rect.x += random.randrange(31) - 15 # move : -15 ~ 15 
+            self.rect.y += random.randrange(11) - 5 # move : -5 ~ 5
+            # 충돌에대한 방향 보정
+            if self.rect.x >= game.SCREEN_WIDTH: self.rect.x -= 15
+            if self.rect.y >= game.SCREEN_HEIGHT: self.rect.y -= 5 
         
-        ## 충돌에대한 방향 보정
-        ## x 좌표 보정
-        if self.rect.x >= game.SCREEN_WIDTH - self.rect.w : 
-            self.rect.x -= 10
-            self.moveDir[0] = 0
-        elif self.rect.x < self.rect.w:
-            self.rect.x += 10
-            self.moveDir[0] = 1
-        ## y좌표 보정
-        if self.rect.y >= game.SCREEN_HEIGHT-self.rect.h: 
-            self.rect.y -= 10
-            self.moveDir[1] = 0
-        elif self.rect.y < self.rect.h:
-            self.rect.y += 10
-            self.moveDir[1] = 1
+        # 난이도 nomal
+        if game.gameMode == "nomal":
+            if self.moveDir == [0, 0] :
+                self.rect.x -= random.randrange(11)
+                self.rect.y -= random.randrange(11) 
+            elif self.moveDir == [0, 1] :
+                self.rect.x -= random.randrange(11)
+                self.rect.y += random.randrange(11)
+            elif self.moveDir == [1, 0]:
+                self.rect.x += random.randrange(11)
+                self.rect.y -= random.randrange(11) 
+            elif self.moveDir == [1, 1] :
+                self.rect.x += random.randrange(11)
+                self.rect.y += random.randrange(11)
+
+            # 충돌에대한 방향 보정
+            # x 좌표 보정
+            if self.rect.x >= game.SCREEN_WIDTH - self.rect.w : 
+                self.rect.x -= 10
+                self.moveDir[0] = 0
+            elif self.rect.x < self.rect.w:
+                self.rect.x += 10
+                self.moveDir[0] = 1
+            # y좌표 보정
+            if self.rect.y >= game.SCREEN_HEIGHT-self.rect.h: 
+                self.rect.y -= 10
+                self.moveDir[1] = 0
+            elif self.rect.y < self.rect.h:
+                self.rect.y += 10
+                self.moveDir[1] = 1
+
+        # 난이도 hard
+        if game.gameMode == "hard":
+            if self.moveDir == [0, 0] :
+                self.rect.x -= random.randrange(31)
+                self.rect.y -= random.randrange(31) 
+            elif self.moveDir == [0, 1] :
+                self.rect.x -= random.randrange(31)
+                self.rect.y += random.randrange(31)
+            elif self.moveDir == [1, 0]:
+                self.rect.x += random.randrange(31)
+                self.rect.y -= random.randrange(31) 
+            elif self.moveDir == [1, 1] :
+                self.rect.x += random.randrange(31)
+                self.rect.y += random.randrange(31)
+
+            # 충돌에대한 방향 보정
+            # x 좌표 보정
+            if self.rect.x >= game.SCREEN_WIDTH - self.rect.w : 
+                self.rect.x -= 30
+                self.moveDir[0] = 0
+            elif self.rect.x < self.rect.w:
+                self.rect.x += 30
+                self.moveDir[0] = 1
+            # y좌표 보정
+            if self.rect.y >= game.SCREEN_HEIGHT-self.rect.h: 
+                self.rect.y -= 30
+                self.moveDir[1] = 0
+            elif self.rect.y < self.rect.h:
+                self.rect.y += 30
+                self.moveDir[1] = 1
+
+
+        
+        
         
 class PlusElement(FloatElement): # 점수 클래스(plus) : 부유물 객체로 부터 상속 받는다.
     DOUBLE_MODE = False
@@ -164,7 +202,7 @@ class Game:
         self.userBestScore = 0
         self.SCREEN_WIDTH = SCREEN_WIDTH_DEFAULT
         self.SCREEN_HEIGHT = SCREEN_HEIGHT_DEFAULT
-        self.gameMode = "easy"
+        self.gameMode = "nomal"
         self.floatElements = [[],[]]
         self.gameTime = 60
         self.userHistory = False
@@ -177,12 +215,89 @@ class Game:
                 self.userHistory = True
 
     ########### 환경 설정 ###########
-    def windowSet(self, width, height): # 게임의 스크린 크기를 조정하고 싶을 때
-        self.SCREEN_WIDTH = width
-        self.SCREEN_HEIGHT = height
+    ## 환경 설정 메인
+    def gameSettings(self):
+        STOP = True
+        self.SCREEN.blit(self.imgs_intro_gameScreenInfo, self.intro_gameScreenInfo[1])
+        self.SCREEN.blit(self.imgs_intro_chefInfo, self.intro_chefInfo[1])
+        while STOP:
+            self.SCREEN.blit(self.settings_modeButton.button, self.settings_modeButtonInfo[1])
+            self.SCREEN.blit(self.settings_userButton.button, self.settings_userButtonInfo[1])
+            self.SCREEN.blit(self.run_menuCancelButton.button, [self.run_menuCancelButtonInfo[1][0], self.run_menuCancelButtonInfo[1][1]])
+            pygame.display.update()
 
-    def userSet(self, name): #유저의 이름을 바꾸고 싶을 때
-        self.userName = name
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.quitGame()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    
+                    if self.settings_modeButton.pressed(event.pos) == True:
+                        self.settings_modeButton.switchImg("Images/settings_modeButton_pressed.png")
+                    elif self.settings_userButton.pressed(event.pos) == True:
+                        self.settings_userButton.switchImg("Images/settings_userButton_pressed.png")
+                    elif self.run_menuCancelButton.pressed(event.pos) == True:
+                        self.run_menuCancelButton.switchImg("Images/run_menuCancelButton_pressed.png")
+
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    pauseTime = time.time()
+                    self.settings_modeButton.switchImg("Images/settings_modeButton.png")
+                    self.settings_userButton.switchImg("Images/settings_userButton.png")
+                    self.run_menuCancelButton.switchImg("Images/run_menuCancelButton.png")
+
+                    if self.settings_modeButton.pressed(event.pos) == True:
+                        self.gameSettingsModeSelect()
+                    elif self.settings_userButton.pressed(event.pos) == True:
+                        print("기능 미구현")
+                    elif self.run_menuCancelButton.pressed(event.pos) == True:
+                        self.introScreen()
+
+
+    ## 게임 난이도 설정
+    def gameSettingsModeSelect(self):
+        STOP = True
+        self.SCREEN.blit(self.imgs_intro_gameScreenInfo, self.intro_gameScreenInfo[1])
+        self.SCREEN.blit(self.imgs_intro_chefInfo, self.intro_chefInfo[1])
+        while STOP:
+            self.SCREEN.blit(self.settings_modeEasyButton.button, self.settings_modeEasyButtonInfo[1])
+            self.SCREEN.blit(self.settings_modeNomalButton.button, self.settings_modeNomalButtonInfo[1])
+            self.SCREEN.blit(self.settings_modeHardButton.button, self.settings_modeHardButtonInfo[1])
+            self.SCREEN.blit(self.settings_menuCancelButton.button, [self.settings_userButtonInfo[1][0], self.settings_userButtonInfo[1][1]+ 2*self.settings_userButtonInfo[2][1]])
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.quitGame()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.settings_modeEasyButton.pressed(event.pos) == True:
+                        self.settings_modeEasyButton.switchImg("Images/settings_modeEasyButton_pressed.png")
+                    elif self.settings_modeNomalButton.pressed(event.pos) == True:
+                        self.settings_modeNomalButton.switchImg("Images/settings_modeNomalButton_pressed.png")
+                    elif self.settings_modeHardButton.pressed(event.pos) == True:
+                        self.settings_modeHardButton.switchImg("Images/settings_modeHardButton_pressed.png")
+                    elif self.settings_menuCancelButton.pressed(event.pos) == True:
+                        self.settings_menuCancelButton.switchImg("Images/run_menuCancelButton_pressed.png")
+
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    pauseTime = time.time()
+                    self.settings_modeEasyButton.switchImg("Images/settings_modeEasyButton.png")
+                    self.settings_modeNomalButton.switchImg("Images/settings_modeNomalButton.png")
+                    self.settings_modeHardButton.switchImg("Images/settings_modeHardButton.png")
+                    self.settings_menuCancelButton.switchImg("Images/run_menuCancelButton.png")
+
+                    if self.settings_modeEasyButton.pressed(event.pos) == True:
+                        self.gameMode = "easy"
+                        self.introScreen()
+                    elif self.settings_modeNomalButton.pressed(event.pos) == True:
+                        self.gameMode = "nomal"
+                        self.introScreen()
+                    elif self.settings_modeHardButton.pressed(event.pos) == True:
+                        self.gameMode = "hard"
+                        self.introScreen()
+                    elif self.settings_menuCancelButton.pressed(event.pos) == True:
+                        self.gameSettings()
+
+            pygame.display.update()
+
+    
 
     ########### 게임 요소 ###########
     def gameFactor(self): # 이미지 파일들의 정보를 관리 : [경로, [x,y], (width, height))]
@@ -192,12 +307,8 @@ class Game:
         self.intro_gameSettingsButtonInfo = ["Images/intro_gameSettingsButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]        
         self.intro_quitGameButtonInfo = ["Images/intro_quitGameButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]  
 
-        self.settings_windowSettingsButtonInfo = ["Images/settings_windowSettingsButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2 - 2*INTRO_BUTTON_LARGE_HEIGHT ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
-        self.settings_modeButtonInfo = ["Images/settings_modeButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
-        self.settings_userButtonInfo = ["Images/settings_userButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]   
-
-        self.settings_fullWindowButtonInfo = ["Images/settings_fullWindowButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2 - 2*INTRO_BUTTON_LARGE_HEIGHT ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
-        self.settings_halfWindowButtonInfo = ["Images/settings_halfWindowButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
+        self.settings_modeButtonInfo = ["Images/settings_modeButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2 - 2*INTRO_BUTTON_LARGE_HEIGHT ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
+        self.settings_userButtonInfo = ["Images/settings_userButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2- INTRO_BUTTON_LARGE_HEIGHT], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]   
 
         self.settings_modeEasyButtonInfo = ["Images/settings_windowSettingsButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2 - 2*INTRO_BUTTON_LARGE_HEIGHT ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
         self.settings_modeNomalButtonInfo = ["Images/settings_modeButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
@@ -214,8 +325,8 @@ class Game:
 
 
         ## Game의 부유물 객체 관리
-        self.run_plusElementInfo = [["Images/chicken.png", "Images/beef.png", "Images/goldApple.png"], [0, 0], (RUN_BUTTON_SMALL_WIDTH, RUN_BUTTON_SMALL_HEIGHT)]
-        self.run_minusElementInfo = [["Images/cucumber.png","Images/redMushroom.png"], [0, 0] , (RUN_BUTTON_SMALL_WIDTH, RUN_BUTTON_SMALL_HEIGHT)]
+        self.run_plusElementInfo = [["Images/chicken.png", "Images/beef.png", "Images/goldApple.png"], [0, 0], (RUN_BUTTON_MID_WIDTH, RUN_BUTTON_MID_HEIGHT)]
+        self.run_minusElementInfo = [["Images/cucumber.png","Images/redMushroom.png"], [0, 0] , (RUN_BUTTON_MID_WIDTH, RUN_BUTTON_MID_HEIGHT)]
 
     def getImgs(self):
         self.imgs_intro_gameScreenInfo = pygame.transform.scale(pygame.image.load(self.intro_gameScreenInfo[0]), self.intro_gameScreenInfo[2])
@@ -238,16 +349,12 @@ class Game:
         self.run_yesButton = Button(self.run_yesButtonInfo[0], self.run_yesButtonInfo[1][0], self.run_yesButtonInfo[1][1], self.run_yesButtonInfo[2][0], self.run_yesButtonInfo[2][1] )
         self.run_noButton = Button(self.run_noButtonInfo[0], self.run_noButtonInfo[1][0], self.run_noButtonInfo[1][1], self.run_noButtonInfo[2][0], self.run_noButtonInfo[2][1] )
 
-        self.settings_windowSettingsButton = Button(self.settings_windowSettingsButtonInfo[0], self.settings_windowSettingsButtonInfo[1][0], self.settings_windowSettingsButtonInfo[1][1], self.settings_windowSettingsButtonInfo[2][0], self.settings_windowSettingsButtonInfo[2][1]) # 인트로 게임 시작 버튼 생성
         self.settings_modeButton = Button(self.settings_modeButtonInfo[0], self.settings_modeButtonInfo[1][0], self.settings_modeButtonInfo[1][1], self.settings_modeButtonInfo[2][0], self.settings_modeButtonInfo[2][1]) #인트로 게임 설정 버튼 생성
         self.settings_userButton = Button(self.settings_userButtonInfo[0], self.settings_userButtonInfo[1][0], self.settings_userButtonInfo[1][1], self.settings_userButtonInfo[2][0], self.settings_userButtonInfo[2][1] )
        
         self.settings_modeEasyButton = Button(self.settings_modeEasyButtonInfo[0], self.settings_modeEasyButtonInfo[1][0], self.settings_modeEasyButtonInfo[1][1], self.settings_modeEasyButtonInfo[2][0], self.settings_modeEasyButtonInfo[2][1]) # 인트로 게임 시작 버튼 생성
         self.settings_modeNomalButton = Button(self.settings_modeNomalButtonInfo[0], self.settings_modeNomalButtonInfo[1][0], self.settings_modeNomalButtonInfo[1][1], self.settings_modeNomalButtonInfo[2][0], self.settings_modeNomalButtonInfo[2][1]) #인트로 게임 설정 버튼 생성
         self.settings_modeHardButton = Button(self.settings_modeHardButtonInfo[0], self.settings_modeHardButtonInfo[1][0], self.settings_modeHardButtonInfo[1][1], self.settings_modeHardButtonInfo[2][0], self.settings_modeHardButtonInfo[2][1] )
-
-        self.settings_fullWindowButton = Button(self.settings_fullWindowButtonInfo[0], self.settings_fullWindowButtonInfo[1][0], self.settings_fullWindowButtonInfo[1][1], self.settings_fullWindowButtonInfo[2][0], self.settings_fullWindowButtonInfo[2][1]) # 인트로 게임 시작 버튼 생성
-        self.settings_halfWindowButton = Button(self.settings_halfWindowButtonInfo[0], self.settings_halfWindowButtonInfo[1][0], self.settings_halfWindowButtonInfo[1][1], self.settings_halfWindowButtonInfo[2][0], self.settings_halfWindowButtonInfo[2][1]) #인트로 게임 설정 버튼 생성
         self.settings_menuCancelButton = Button(self.run_menuCancelButtonInfo[0], self.run_menuCancelButtonInfo[1][0], self.run_menuCancelButtonInfo[1][1]+self.run_menuCancelButtonInfo[2][1], self.run_menuCancelButtonInfo[2][0], self.run_menuCancelButtonInfo[2][1] )
         
 
@@ -261,8 +368,11 @@ class Game:
         self.gameText = self.gameFont.render(f"{TEXT}", True, COLOR)
         self.gameTextRect = self.gameText.get_rect() 
         self.SCREEN.blit(self.gameText, [X - self.gameTextRect.w/2, Y - self.gameTextRect.h/2])
-            
 
+    
+
+            
+    ########## 게임 실행 ##########
     def quitGame(self):
         STOP = True
         while STOP:
@@ -319,124 +429,7 @@ class Game:
         pygame.quit()
         sys.exit()
 
-    def gameSettingsWindowSize(self):
-        STOP = True
-        self.SCREEN.blit(self.imgs_intro_gameScreenInfo, self.intro_gameScreenInfo[1])
-        self.SCREEN.blit(self.imgs_intro_chefInfo, self.intro_chefInfo[1])
-        while STOP:
-            self.SCREEN.blit(self.settings_fullWindowButton.button, self.settings_fullWindowButtonInfo[1])
-            self.SCREEN.blit(self.settings_halfWindowButton.button, self.settings_halfWindowButtonInfo[1])
-            self.SCREEN.blit(self.run_menuCancelButton.button, self.settings_modeHardButtonInfo[1])
-
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.quitGame()
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if self.settings_fullWindowButton.pressed(event.pos) == True:
-                        self.settings_fullWindowButton.switchImg("Images/settings_fullWindowButton_pressed.png")
-                    elif self.settings_halfWindowButton.pressed(event.pos) == True:
-                        self.settings_halfWindowButton.switchImg("Images/settings_halfWindowButton_pressed.png")
-                    elif self.run_menuCancelButton.pressed(event.pos) == True:
-                        self.run_menuCancelButton.switchImg("Images/run_menuCancelButton_pressed.png")
-
-                elif event.type == pygame.MOUSEBUTTONUP:
-                    pauseTime = time.time()
-                    self.settings_fullWindowButton.switchImg("Images/settings_fullWindowButton.png")
-                    self.settings_halfWindowButton.switchImg("Images/settings_halfWindowButton.png")
-                    self.run_menuCancelButton.switchImg("Images/run_menuCancelButton.png")
-
-                    if self.settings_fullWindowButton.pressed(event.pos) == True:
-                        print("기능 미구현")
-                    elif self.settings_halfWindowButton.pressed(event.pos) == True:
-                        print("기능 미구현")
-                    elif self.run_menuCancelButton.pressed(event.pos) == True:
-                        self.gameSettings()
-
-            pygame.display.update()
-
-    def gameSettingsModeSelect(self):
-        STOP = True
-        self.SCREEN.blit(self.imgs_intro_gameScreenInfo, self.intro_gameScreenInfo[1])
-        self.SCREEN.blit(self.imgs_intro_chefInfo, self.intro_chefInfo[1])
-        while STOP:
-            self.SCREEN.blit(self.settings_modeEasyButton.button, self.settings_modeEasyButtonInfo[1])
-            self.SCREEN.blit(self.settings_modeNomalButton.button, self.settings_modeNomalButtonInfo[1])
-            self.SCREEN.blit(self.settings_modeHardButton.button, self.settings_modeHardButtonInfo[1])
-            self.SCREEN.blit(self.settings_menuCancelButton.button, [self.settings_userButtonInfo[1][0], self.settings_userButtonInfo[1][1]+ self.settings_userButtonInfo[2][1]])
-
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.quitGame()
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if self.settings_modeEasyButton.pressed(event.pos) == True:
-                        self.settings_modeEasyButton.switchImg("Images/settings_modeEasyButton_pressed.png")
-                    elif self.settings_modeNomalButton.pressed(event.pos) == True:
-                        self.settings_modeNomalButton.switchImg("Images/settings_modeNomalButton_pressed.png")
-                    elif self.settings_modeHardButton.pressed(event.pos) == True:
-                        self.settings_modeHardButton.switchImg("Images/settings_modeHardButton_pressed.png")
-                    elif self.settings_menuCancelButton.pressed(event.pos) == True:
-                        self.settings_menuCancelButton.switchImg("Images/run_menuCancelButton_pressed.png")
-
-                elif event.type == pygame.MOUSEBUTTONUP:
-                    pauseTime = time.time()
-                    self.settings_modeEasyButton.switchImg("Images/settings_modeEasyButton.png")
-                    self.settings_modeNomalButton.switchImg("Images/settings_modeNomalButton.png")
-                    self.settings_modeHardButton.switchImg("Images/settings_modeHardButton.png")
-                    self.settings_menuCancelButton.switchImg("Images/run_menuCancelButton.png")
-
-                    if self.settings_modeEasyButton.pressed(event.pos) == True:
-                        self.gameMode = "easy"
-                        self.introScreen()
-                    elif self.settings_modeNomalButton.pressed(event.pos) == True:
-                        self.gameMode = "nomal"
-                        self.introScreen()
-                    elif self.settings_modeHardButton.pressed(event.pos) == True:
-                        self.gameMode = "hard"
-                        self.introScreen()
-                    elif self.settings_menuCancelButton.pressed(event.pos) == True:
-                        self.gameSettings()
-
-            pygame.display.update()
-
-    def gameSettings(self):
-        STOP = True
-        self.SCREEN.blit(self.imgs_intro_gameScreenInfo, self.intro_gameScreenInfo[1])
-        self.SCREEN.blit(self.imgs_intro_chefInfo, self.intro_chefInfo[1])
-        while STOP:
-            self.SCREEN.blit(self.settings_windowSettingsButton.button, self.settings_windowSettingsButtonInfo[1])
-            self.SCREEN.blit(self.settings_modeButton.button, self.settings_modeButtonInfo[1])
-            self.SCREEN.blit(self.settings_userButton.button, self.settings_userButtonInfo[1])
-            self.SCREEN.blit(self.settings_menuCancelButton.button, [self.settings_userButtonInfo[1][0], self.settings_userButtonInfo[1][1] + self.settings_userButtonInfo[2][1]])
-            pygame.display.update()
-
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.quitGame()
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if self.settings_windowSettingsButton.pressed(event.pos) == True:
-                        self.settings_windowSettingsButton.switchImg("Images/settings_windowSettingsButton_pressed.png")
-                    elif self.settings_modeButton.pressed(event.pos) == True:
-                        self.settings_modeButton.switchImg("Images/settings_modeButton_pressed.png")
-                    elif self.settings_userButton.pressed(event.pos) == True:
-                        self.settings_userButton.switchImg("Images/settings_userButton_pressed.png")
-                    elif self.settings_menuCancelButton.pressed(event.pos) == True:
-                        self.settings_menuCancelButton.switchImg("Images/run_menuCancelButton_pressed.png")
-
-                elif event.type == pygame.MOUSEBUTTONUP:
-                    pauseTime = time.time()
-                    self.settings_windowSettingsButton.switchImg("Images/settings_windowSettingsButton.png")
-                    self.settings_modeButton.switchImg("Images/settings_modeButton.png")
-                    self.settings_userButton.switchImg("Images/settings_userButton.png")
-                    self.settings_menuCancelButton.switchImg("Images/run_menuCancelButton.png")
-
-                    if self.settings_windowSettingsButton.pressed(event.pos) == True:
-                        self.gameSettingsWindowSize()
-                    elif self.settings_modeButton.pressed(event.pos) == True:
-                        self.gameSettingsModeSelect()
-                    elif self.settings_userButton.pressed(event.pos) == True:
-                        print("기능 미구현")
-                    elif self.settings_menuCancelButton.pressed(event.pos) == True:
-                        self.introScreen()
+    
 
                         
 
