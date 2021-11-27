@@ -19,10 +19,10 @@ RUN_BUTTON_FIRE_HEIGHT = SCREEN_HEIGHT_DEFAULT*0.1
 ## Plus Value
 SCORE_CHICKEN = 1000
 SCORE_BEEF = 2000
+SCORE_SUSHI = 3000
 
 ## Minus Value
 SCORE_CUCUMBER = 500
-
 
 STOP = True
 
@@ -98,16 +98,18 @@ class FloatElement: # 부유물 클래스: 점수 클래스(plus)와, 실점(min
             self.type = "chicken"
         elif Floatter_IMG_PATH == "Images/beef.png":
             self.type = "beef"
-        elif Floatter_IMG_PATH == "Images/cucumber.png":
-            self.type = "cucumber"
+        elif Floatter_IMG_PATH == "Images/sushi.png":
+            self.type = "sushi"
         elif Floatter_IMG_PATH == "Images/goldApple.png":
             self.type = "goldApple"
-        elif Floatter_IMG_PATH == "Images/redMushroom.png":
-            self.type = "redMushroom"
         elif Floatter_IMG_PATH == "Images/medicine.png":
             self.type = "medicine"
-
-    ##모드에 따라 다른 이동
+        elif Floatter_IMG_PATH == "Images/cucumber.png":
+            self.type = "cucumber" 
+        elif Floatter_IMG_PATH == "Images/redMushroom.png":
+            self.type = "redMushroom"
+    
+    ## 모드에 따라 다른 이동
     def randomMove(self):
         
         # 난이도 easy
@@ -182,8 +184,6 @@ class FloatElement: # 부유물 클래스: 점수 클래스(plus)와, 실점(min
 
 
         
-        
-        
 class PlusElement(FloatElement): # 점수 클래스(plus) : 부유물 객체로 부터 상속 받는다.
     DOUBLE_MODE = False
     def __init__(self, Floatter_IMG_PATH, w, h):
@@ -196,6 +196,8 @@ class PlusElement(FloatElement): # 점수 클래스(plus) : 부유물 객체로 
             game.score.upScore(SCORE_CHICKEN)
         elif self.type == "beef":
             game.score.upScore(SCORE_BEEF) 
+        elif self.type == "sushi":
+            game.score.upScore(SCORE_SUSHI)
         elif self.type == "goldApple":
             PlusElement.DOUBLE_MODE = True
             return True
@@ -203,13 +205,8 @@ class PlusElement(FloatElement): # 점수 클래스(plus) : 부유물 객체로 
             if MinusElement.Minus_MODE == True:
                 MinusElement.Minus_MODE = False
             game.life.plusLife(1)
-        
         return False
             
-
-                
-
-        
 
 class MinusElement(FloatElement): # 실점 클래스(plus) : 부유물 객체로 부터 상속 받는다.
     Minus_MODE = False
@@ -360,7 +357,7 @@ class Game:
 
 
         ## Game의 부유물 객체 관리
-        self.run_plusElementInfo = [["Images/chicken.png", "Images/beef.png", "Images/goldApple.png","Images/medicine.png"], [0, 0], (RUN_BUTTON_MID_WIDTH, RUN_BUTTON_MID_HEIGHT)]
+        self.run_plusElementInfo = [["Images/chicken.png", "Images/beef.png", "Images/sushi.png", "Images/goldApple.png","Images/medicine.png"], [0, 0], (RUN_BUTTON_MID_WIDTH, RUN_BUTTON_MID_HEIGHT)]
         self.run_minusElementInfo = [["Images/cucumber.png","Images/redMushroom.png"], [0, 0] , (RUN_BUTTON_MID_WIDTH, RUN_BUTTON_MID_HEIGHT)]
 
     def getImgs(self):
@@ -499,26 +496,29 @@ class Game:
                         self.quitGame()
 
 
+            ## 게임 스크린
             self.SCREEN.blit(self.imgs_intro_gameScreenInfo, self.intro_gameScreenInfo[1])
             self.SCREEN.blit(self.imgs_intro_chefInfo, self.intro_chefInfo[1])
 
-            self.gameUserNameFont = pygame.font.SysFont( 'impact', 50+ changeColorAndSize[cntForTimeSlow%10]*2, False, False)
-            self.gameUserNameText = self.gameUserNameFont.render(f"{self.userName}, Are You Hungry ?!", True, (60+ changeColorAndSize[cntForTimeSlow%10],changeColorAndSize[cntForTimeSlow%10]*20 ,60+ changeColorAndSize[cntForTimeSlow%10] ))
+            ## 인트로 멘트
+            self.gameUserNameFont = pygame.font.SysFont( 'impact', 30+ changeColorAndSize[cntForTimeSlow%10]*2, False, False)
+            self.gameUserNameText = self.gameUserNameFont.render(f"Hungry {self.userName}", True, (changeColorAndSize[cntForTimeSlow%10]*10+60 ,0 ,changeColorAndSize[cntForTimeSlow%10]*20 ))
             self.gameUserNameRect = self.gameUserNameText.get_rect()
             self.SCREEN.blit(self.gameUserNameText, [self.SCREEN_WIDTH/2 - self.gameUserNameRect.w/2, self.SCREEN_HEIGHT - self.gameUserNameRect.h])
-
-            self.gameUserBestScoreFont = pygame.font.SysFont( 'impact', 25+changeColorAndSize[cntForTimeSlow%10], False, False)
+            
+            ## 유저의 최고 점수
+            self.gameUserBestScoreFont = pygame.font.SysFont( 'impact', 20+changeColorAndSize[cntForTimeSlow%10], False, False)
             self.gameUserBestScoreText = self.gameUserBestScoreFont.render(f"YOUR BEST SCORE : {self.userBestScore}", True, BLACK)
             self.gameUserBestScoreRect = self.gameUserBestScoreText.get_rect()
             self.SCREEN.blit(self.gameUserBestScoreText, [self.SCREEN_WIDTH/2 - self.gameUserBestScoreRect.w/2, self.SCREEN_HEIGHT*0.01])
             
+            ## 게임 버튼
             self.SCREEN.blit(self.intro_gameStartButton.button, self.intro_gameStartButtonInfo[1])
             self.SCREEN.blit(self.intro_gameSettingsButton.button, self.intro_gameSettingsButtonInfo[1])
             self.SCREEN.blit(self.intro_quitGameButton.button, self.intro_quitGameButtonInfo[1])
             
-
             pygame.display.update()
-            self.clock.tick(20)
+            self.clock.tick(15)
 
     ######## 게임 스크린 ########
     def isInYourMouth(self, isPlusElement, points, element): # points: x*1.1, y*1.25
@@ -565,7 +565,6 @@ class Game:
                         self.run_restartGameButton.switchImg("Images/run_restartGameButton_pressed.png")
 
                 elif event.type == pygame.MOUSEBUTTONUP:
-                    pauseTime = time.time()
                     self.run_menuToIntroButton.switchImg("Images/run_menuToIntroButton.png")
                     self.run_restartGameButton.switchImg("Images/run_restartGameButton.png")
 
@@ -588,13 +587,123 @@ class Game:
         self.life.life = 3
         self.score.score = 0
         
+    def floatterGenerotr(self):
+        if self.gameMode == "easy":
+            ## 부유물 객체의 생성 [plus : minus = 8 : 2]
+            if ((time.time() - self.startTime)%1 <0.06): # 1초에 2번 부유물 객체 생성
+                plusOrMinus = random.randrange(100)
+                if plusOrMinus < 70: # 2:8 = (minus:plus) 의 비율로 부유물 객체 생성 
+                    self.floatElements[0].append(PlusElement(self.run_plusElementInfo[0][random.randrange(0, 3)], self.run_plusElementInfo[2][0], self.run_plusElementInfo[2][1]))
+                elif 70<= plusOrMinus  <80:
+                    self.floatElements[1].append(MinusElement(self.run_minusElementInfo[0][random.randrange(0, 1)], self.run_minusElementInfo[2][0], self.run_minusElementInfo[2][1]))
+                elif 80<=plusOrMinus<85:
+                    self.floatElements[0].append(PlusElement(self.run_plusElementInfo[0][3], self.run_plusElementInfo[2][0], self.run_plusElementInfo[2][1]))
+                elif 85<=plusOrMinus<90:
+                     self.floatElements[1].append(MinusElement(self.run_minusElementInfo[0][1], self.run_minusElementInfo[2][0], self.run_minusElementInfo[2][1]))
+                elif 90<=plusOrMinus<95:
+                    self.floatElements[0].append(PlusElement(self.run_plusElementInfo[0][4], self.run_plusElementInfo[2][0], self.run_plusElementInfo[2][1]))
+        
+        elif self.gameMode == "nomal":
+            ## 부유물 객체의 생성 [plus : minus = 8 : 2]
+            if ((time.time() - self.startTime)%1 <0.1): # 1초에 2번 부유물 객체 생성
+                plusOrMinus = random.randrange(100)
+                if plusOrMinus < 70: # 2:8 = (minus:plus) 의 비율로 부유물 객체 생성 
+                    self.floatElements[0].append(PlusElement(self.run_plusElementInfo[0][random.randrange(0, 3)], self.run_plusElementInfo[2][0], self.run_plusElementInfo[2][1]))
+                elif 70<= plusOrMinus  <80:
+                    self.floatElements[1].append(MinusElement(self.run_minusElementInfo[0][random.randrange(0, 1)], self.run_minusElementInfo[2][0], self.run_minusElementInfo[2][1]))
+                elif 80<=plusOrMinus<85:
+                    self.floatElements[0].append(PlusElement(self.run_plusElementInfo[0][3], self.run_plusElementInfo[2][0], self.run_plusElementInfo[2][1]))
+                elif 85<=plusOrMinus<90:
+                     self.floatElements[1].append(MinusElement(self.run_minusElementInfo[0][1], self.run_minusElementInfo[2][0], self.run_minusElementInfo[2][1]))
+                elif 90<=plusOrMinus<95:
+                    self.floatElements[0].append(PlusElement(self.run_plusElementInfo[0][4], self.run_plusElementInfo[2][0], self.run_plusElementInfo[2][1]))
+        
+        elif self.gameMode == "hard":
+            ## 부유물 객체의 생성 [plus : minus = 8 : 2]
+            if ((time.time() - self.startTime)%1 <0.16): # 1초에 2번 부유물 객체 생성
+                plusOrMinus = random.randrange(100)
+                if plusOrMinus < 70: # 2:8 = (minus:plus) 의 비율로 부유물 객체 생성 
+                    self.floatElements[0].append(PlusElement(self.run_plusElementInfo[0][random.randrange(0, 3)], self.run_plusElementInfo[2][0], self.run_plusElementInfo[2][1]))
+                elif 70<= plusOrMinus  <80:
+                    self.floatElements[1].append(MinusElement(self.run_minusElementInfo[0][random.randrange(0, 1)], self.run_minusElementInfo[2][0], self.run_minusElementInfo[2][1]))
+                elif 80<=plusOrMinus<85:
+                    self.floatElements[0].append(PlusElement(self.run_plusElementInfo[0][3], self.run_plusElementInfo[2][0], self.run_plusElementInfo[2][1]))
+                elif 85<=plusOrMinus<90:
+                     self.floatElements[1].append(MinusElement(self.run_minusElementInfo[0][1], self.run_minusElementInfo[2][0], self.run_minusElementInfo[2][1]))
+                elif 90<=plusOrMinus<95:
+                    self.floatElements[0].append(PlusElement(self.run_plusElementInfo[0][4], self.run_plusElementInfo[2][0], self.run_plusElementInfo[2][1]))
+            
+
+    def eatChecker(self):
+        ## 먹은지 안 먹은지 주기적으로 검출
+        for element in self.floatElements[0]:
+            if (self.isInYourMouth(True , self.points, element)):
+                if element.eat():
+                    self.startPeverTime = time.time()
+                    
+                self.floatElements[0].remove(element)
+        
+        for element in self.floatElements[1]:
+            if (self.isInYourMouth(False , self.points, element)):
+                element.eat()
+                if self.life.life <= 0: self.gameFinish("GAMEOVER") 
+                self.floatElements[1].remove(element)
+            if self.rejectOnYourMouth(self.points, element):
+                self.floatElements[1].remove(element)
+    def timeChecker(self): 
+        ## 시간 체크
+        # 타임오버
+        self.presentTime = (time.time() - self.startTime)//1 # 현재 시간 측정
+        if (self.presentTime > self.gameTime):
+            self.gameFinish("TIMEOVER")
+        else:
+            self.timmerText = self.timmerFont.render(f"{self.gameTime-int(self.presentTime)}", True, BLACK)
+            self.timmerTextRect = self.timmerText.get_rect()
+        # 피버타임 시간 체크
+        if time.time() - self.startPeverTime > 10:
+            PlusElement.DOUBLE_MODE = False
+
+    def run_eventChecker(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.quitGame()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if self.run_menuButton.pressed(event.pos) == True:
+                    STOP = True
+                    while STOP:
+                        self.SCREEN.blit(self.run_menuToIntroButton.button, self.run_menuToIntroButtonInfo[1])
+                        self.SCREEN.blit(self.run_menuCancelButton.button, self.run_menuCancelButtonInfo[1])
+
+                        for event in pygame.event.get():
+                            if event.type == pygame.QUIT:
+                                self.quitGame()
+                            elif event.type == pygame.MOUSEBUTTONDOWN:
+                                if self.run_menuToIntroButton.pressed(event.pos) == True:
+                                    self.run_menuToIntroButton.switchImg("Images/run_menuToIntroButton_pressed.png")
+                                elif self.run_menuCancelButton.pressed(event.pos) == True:
+                                    self.run_menuCancelButton.switchImg("Images/run_menuCancelButton_pressed.png")
+
+                            elif event.type == pygame.MOUSEBUTTONUP:
+                                pauseTime = time.time()
+                                self.run_menuToIntroButton.switchImg("Images/run_menuToIntroButton.png")
+                                self.run_menuCancelButton.switchImg("Images/run_menuCancelButton.png")
+
+                                if self.run_menuToIntroButton.pressed(event.pos) == True:
+                                    self.gameFactorClear()
+                                    self.introScreen()
+
+                                elif self.run_menuCancelButton.pressed(event.pos) == True:
+                                    STOP = False
+                                    self.startTime -= (time.time() - pauseTime) # 정지한 시간만큼 현재 시간 보정
+                                    
+                        pygame.display.update()
 
     def gameStart(self):
         STOP = True
         self.startPeverTime = 0
         self.finishPeverTime = 0
         for points in fc.run(visualize=1, max_threads=4, capture=0):
-            
+            self.points = points
             while STOP:
                 pygame.draw.rect(self.SCREEN, BLACK, [0, 0, self.SCREEN_WIDTH, self.SCREEN_HEIGHT])
                 self.gamePauseFont = pygame.font.SysFont( 'impact', 40, False, False)
@@ -607,91 +716,14 @@ class Game:
                 for event in pygame.event.get():
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_SPACE:
-                            startTime = time.time()
+                            self.startTime = time.time()
                             STOP = False 
 
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.quitGame()
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if self.run_menuButton.pressed(event.pos) == True:
-                        STOP = True
-                        while STOP:
-                            self.SCREEN.blit(self.run_menuToIntroButton.button, self.run_menuToIntroButtonInfo[1])
-                            self.SCREEN.blit(self.run_menuCancelButton.button, self.run_menuCancelButtonInfo[1])
-
-                            for event in pygame.event.get():
-                                if event.type == pygame.QUIT:
-                                    self.quitGame()
-                                elif event.type == pygame.MOUSEBUTTONDOWN:
-                                    if self.run_menuToIntroButton.pressed(event.pos) == True:
-                                        self.run_menuToIntroButton.switchImg("Images/run_menuToIntroButton_pressed.png")
-                                    elif self.run_menuCancelButton.pressed(event.pos) == True:
-                                        self.run_menuCancelButton.switchImg("Images/run_menuCancelButton_pressed.png")
-
-                                elif event.type == pygame.MOUSEBUTTONUP:
-                                    pauseTime = time.time()
-                                    self.run_menuToIntroButton.switchImg("Images/run_menuToIntroButton.png")
-                                    self.run_menuCancelButton.switchImg("Images/run_menuCancelButton.png")
-
-                                    if self.run_menuToIntroButton.pressed(event.pos) == True:
-                                        self.gameFactorClear()
-                                        self.introScreen()
-
-                                    elif self.run_menuCancelButton.pressed(event.pos) == True:
-                                        STOP = False
-                                        startTime -= (time.time() - pauseTime) # 정지한 시간만큼 현재 시간 보정
-                                        
-                            pygame.display.update()
-
-            
-            
-            ## 부유물 객체의 생성 [plus : minus = 8 : 2]
-            if ((time.time() - startTime)%1 <0.1): # 1초에 2번 부유물 객체 생성
-                plusOrMinus = random.randrange(100)
-                if plusOrMinus < 70: # 2:8 = (minus:plus) 의 비율로 부유물 객체 생성 
-                    self.floatElements[0].append(PlusElement(self.run_plusElementInfo[0][random.randrange(0, 2)], self.run_plusElementInfo[2][0], self.run_plusElementInfo[2][1]))
-                    self.floatElements[0].append(PlusElement(self.run_plusElementInfo[0][1], self.run_plusElementInfo[2][0], self.run_plusElementInfo[2][1]))
-                elif 70<= plusOrMinus  <80:
-                    self.floatElements[1].append(MinusElement(self.run_minusElementInfo[0][random.randrange(0, 1)], self.run_minusElementInfo[2][0], self.run_minusElementInfo[2][1]))
-                elif 80<=plusOrMinus<85:
-                    self.floatElements[0].append(PlusElement(self.run_plusElementInfo[0][2], self.run_plusElementInfo[2][0], self.run_plusElementInfo[2][1]))
-                elif 85<=plusOrMinus<90:
-                     self.floatElements[1].append(MinusElement(self.run_minusElementInfo[0][1], self.run_minusElementInfo[2][0], self.run_minusElementInfo[2][1]))
-                elif 90<=plusOrMinus<95:
-                    self.floatElements[0].append(PlusElement(self.run_plusElementInfo[0][3], self.run_plusElementInfo[2][0], self.run_plusElementInfo[2][1]))
-
-            ## 먹은지 안 먹은지 주기적으로 검출
-            for element in self.floatElements[0]:
-                if (self.isInYourMouth(True , points, element)):
-                    if element.eat():
-                        self.startPeverTime = time.time()
-                        
-                    self.floatElements[0].remove(element)
-            
-            for element in self.floatElements[1]:
-                if (self.isInYourMouth(False , points, element)):
-                    element.eat()
-                    if self.life.life <= 0: self.gameFinish("GAMEOVER") 
-                    self.floatElements[1].remove(element)
-                if self.rejectOnYourMouth(points, element):
-                    self.floatElements[1].remove(element)
-            
-            
-
-
-            ## 시간 체크
-            # 타임오버
-            presentTime = (time.time() - startTime)//1 # 현재 시간 측정
-            if (presentTime > self.gameTime):
-                self.gameFinish("TIMEOVER")
-            else:
-                self.timmerText = self.timmerFont.render(f"{self.gameTime-int(presentTime)}", True, BLACK)
-                self.timmerTextRect = self.timmerText.get_rect()
-            # 피버타임 시간 체크
-            if time.time() - self.startPeverTime > 10:
-                PlusElement.DOUBLE_MODE = False
-            
+            self.run_eventChecker()
+            self.floatterGenerotr()
+            self.eatChecker()
+            self.timeChecker()
+        
             
             ## 부유물 30개 넘으면 Game Over
             if (len(self.floatElements[0]) + len(self.floatElements[1]) > 30 ): self.gameFinish("GAMEOVER")
