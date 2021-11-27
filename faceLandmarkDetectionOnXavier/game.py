@@ -36,14 +36,32 @@ YELLOW = (255, 255, 0)
 class Life():
     def __init__(self):
         self.life = 3
+    def plusLife (self, value):
+        if self.life < 3:
+            self.life += value
+        else:
+            pass
+
     def minusLife (self, value):
         self.life -= value
+    
     
 class Score():
     def __init__(self):
         self.score = 0
     def upScore(self, value):
-        self.score += value
+        if PlusElement.DOUBLE_MODE == True:
+            if MinusElement.Minus_MODE == True:
+                self.score += 2*0.7*value
+            else:
+                self.score += 2*value
+        else: 
+            if MinusElement.Minus_MODE == True:
+                self.score += 0.7*value
+            else:
+                self.score += value 
+
+
     def downScore(self, value):
         if (self.score - value) > 0:
             self.score -= value
@@ -86,6 +104,8 @@ class FloatElement: # 부유물 클래스: 점수 클래스(plus)와, 실점(min
             self.type = "goldApple"
         elif Floatter_IMG_PATH == "Images/redMushroom.png":
             self.type = "redMushroom"
+        elif Floatter_IMG_PATH == "Images/medicine.png":
+            self.type = "medicine"
 
     ##모드에 따라 다른 이동
     def randomMove(self):
@@ -173,14 +193,21 @@ class PlusElement(FloatElement): # 점수 클래스(plus) : 부유물 객체로 
         if self.type == "medicine.png":
             pass
         elif self.type == "chicken":
-            game.score.upScore(SCORE_CHICKEN) if PlusElement.DOUBLE_MODE == False else game.score.upScore(2*SCORE_CHICKEN)
+            game.score.upScore(SCORE_CHICKEN)
         elif self.type == "beef":
-            game.score.upScore(SCORE_BEEF) if PlusElement.DOUBLE_MODE == False else game.score.upScore(2*SCORE_BEEF)
+            game.score.upScore(SCORE_BEEF) 
         elif self.type == "goldApple":
             PlusElement.DOUBLE_MODE = True
             return True
+        elif self.type == "medicine":
+            if MinusElement.Minus_MODE == True:
+                MinusElement.Minus_MODE = False
+            game.life.plusLife(1)
+        
+        return False
+            
 
-        return False        
+                
 
         
 
@@ -188,13 +215,21 @@ class MinusElement(FloatElement): # 실점 클래스(plus) : 부유물 객체로
     Minus_MODE = False
     def __init__(self, Floatter_IMG_PATH, w, h):
         super().__init__(Floatter_IMG_PATH, w, h)
+        
     def eat(self):
         if self.type == "cucumber":
-            game.score.downScore(SCORE_CUCUMBER) if MinusElement.Minus_MODE == False else game.score.downScore(0.9*SCORE_CUCUMBER)
+            game.score.downScore(SCORE_CUCUMBER) 
             game.life.minusLife(1)
+        elif self.type == "chicken":
+            game.score.upScore(SCORE_CHICKEN) 
+        elif self.type == "beef":
+            game.score.upScore(SCORE_BEEF) 
         elif self.type == "redMushroom":
             MinusElement.Minus_MODE = True
             game.life.minusLife(2)
+            
+
+        
 
 class Game:
     def __init__(self): # 게임 객체를 생성했을 때
@@ -325,7 +360,7 @@ class Game:
 
 
         ## Game의 부유물 객체 관리
-        self.run_plusElementInfo = [["Images/chicken.png", "Images/beef.png", "Images/goldApple.png"], [0, 0], (RUN_BUTTON_MID_WIDTH, RUN_BUTTON_MID_HEIGHT)]
+        self.run_plusElementInfo = [["Images/chicken.png", "Images/beef.png", "Images/goldApple.png","Images/medicine.png"], [0, 0], (RUN_BUTTON_MID_WIDTH, RUN_BUTTON_MID_HEIGHT)]
         self.run_minusElementInfo = [["Images/cucumber.png","Images/redMushroom.png"], [0, 0] , (RUN_BUTTON_MID_WIDTH, RUN_BUTTON_MID_HEIGHT)]
 
     def getImgs(self):
@@ -614,22 +649,24 @@ class Game:
             ## 부유물 객체의 생성 [plus : minus = 8 : 2]
             if ((time.time() - startTime)%1 <0.1): # 1초에 2번 부유물 객체 생성
                 plusOrMinus = random.randrange(100)
-                if plusOrMinus < 80: # 2:8 = (minus:plus) 의 비율로 부유물 객체 생성 
+                if plusOrMinus < 70: # 2:8 = (minus:plus) 의 비율로 부유물 객체 생성 
                     self.floatElements[0].append(PlusElement(self.run_plusElementInfo[0][random.randrange(0, 2)], self.run_plusElementInfo[2][0], self.run_plusElementInfo[2][1]))
-                    #self.floatElements[0].append(PlusElement(self.run_plusElementInfo[0][2], self.run_plusElementInfo[2][0], self.run_plusElementInfo[2][1]))
-        
-                elif 80<= plusOrMinus  <90:
+                    self.floatElements[0].append(PlusElement(self.run_plusElementInfo[0][1], self.run_plusElementInfo[2][0], self.run_plusElementInfo[2][1]))
+                elif 70<= plusOrMinus  <80:
                     self.floatElements[1].append(MinusElement(self.run_minusElementInfo[0][random.randrange(0, 1)], self.run_minusElementInfo[2][0], self.run_minusElementInfo[2][1]))
-                elif 90<=plusOrMinus<95:
+                elif 80<=plusOrMinus<85:
                     self.floatElements[0].append(PlusElement(self.run_plusElementInfo[0][2], self.run_plusElementInfo[2][0], self.run_plusElementInfo[2][1]))
-                elif 95<=plusOrMinus<100:
-                    self.floatElements[1].append(MinusElement(self.run_minusElementInfo[0][1], self.run_minusElementInfo[2][0], self.run_minusElementInfo[2][1]))
+                elif 85<=plusOrMinus<90:
+                     self.floatElements[1].append(MinusElement(self.run_minusElementInfo[0][1], self.run_minusElementInfo[2][0], self.run_minusElementInfo[2][1]))
+                elif 90<=plusOrMinus<95:
+                    self.floatElements[0].append(PlusElement(self.run_plusElementInfo[0][3], self.run_plusElementInfo[2][0], self.run_plusElementInfo[2][1]))
 
             ## 먹은지 안 먹은지 주기적으로 검출
             for element in self.floatElements[0]:
                 if (self.isInYourMouth(True , points, element)):
                     if element.eat():
                         self.startPeverTime = time.time()
+                        
                     self.floatElements[0].remove(element)
             
             for element in self.floatElements[1]:
@@ -652,10 +689,9 @@ class Game:
                 self.timmerText = self.timmerFont.render(f"{self.gameTime-int(presentTime)}", True, BLACK)
                 self.timmerTextRect = self.timmerText.get_rect()
             # 피버타임 시간 체크
-            if self.finishPeverTime != 0:
-                self.finishPeverTime = int(time.time() - self.startPeverTime)
-                if self.finishPeverTime > 10: PlusElement.DOUBLE_MODE = False
-                print(self.finishPeverTime)
+            if time.time() - self.startPeverTime > 10:
+                PlusElement.DOUBLE_MODE = False
+            
             
             ## 부유물 30개 넘으면 Game Over
             if (len(self.floatElements[0]) + len(self.floatElements[1]) > 30 ): self.gameFinish("GAMEOVER")
