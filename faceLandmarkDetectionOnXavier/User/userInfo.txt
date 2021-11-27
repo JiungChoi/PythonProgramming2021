@@ -1,3 +1,11 @@
+dfd 85000
+df 4000
+fd 0
+d 0
 D 245000
 wldnd 32500
 rkawk 0
+& C:/Users/rn9zh/anaconda3/envs/test/python.exe
+& C:/Users/rn9zh/anaconda3/envs/test/python.exe
+& C:/Users/rn9zh/anaconda3/envs/test/python.exe
+dfdf 20500
