@@ -111,7 +111,6 @@ from tracker import Tracker, get_model_base_path
 
 
 def run(fps=30, visualize = 0, dcap=None, use_dshowcapture=1, capture="0", log_data="",raw_rgb=0, width=600, height=600, video_out = None, face_id_offset = 0, video_scale=1, threshold=None, max_threads=max_threads, faces=1, discard_after=10, scan_every=3, silent=0, model=3, model_dir=None, gaze_tracking=1, detection_threshold=0.6, scan_retinaface=0, max_feature_updates=900, no_3d_adapt=1, try_hard=0, video_fps = 24, dump_points = ""):
-     
     use_dshowcapture_flag = False
     if os.name == 'nt':
         use_dshowcapture_flag = True if use_dshowcapture == 1 else False
@@ -259,6 +258,7 @@ def run(fps=30, visualize = 0, dcap=None, use_dshowcapture=1, capture="0", log_d
                         log.write("\r\n")
                         log.flush()
 
+                
                 
                 if len(landmarks) / 68 == 1:
                     cv2.circle(frame, (width - landmarks[58][0], landmarks[58][1]), radius = 5, color = (255, 0, 0))
