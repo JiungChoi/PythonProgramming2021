@@ -32,6 +32,9 @@ RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 WHITE = (255, 255, 255)
 YELLOW = (255, 255, 0)
+GOLD = (255, 215, 0)
+SILVER = (192, 192, 192)
+BRONZE = (153, 102, 0)
 
 class Life():
     def __init__(self):
@@ -117,10 +120,10 @@ class FloatElement: # 부유물 클래스: 점수 클래스(plus)와, 실점(min
             self.rect.x += random.randrange(31) - 15 # move : -15 ~ 15 
             self.rect.y += random.randrange(11) - 5 # move : -5 ~ 5
             # 충돌에대한 방향 보정
-            if self.rect.x > game.SCREEN_WIDTH: self.rect.x -= 15
-            elif self.rect.y < game.SCREEN_WIDTH: self.rect.x += 15
-            if self.rect.y > game.SCREEN_HEIGHT: self.rect.y -= 5 
-            elif self.rect.y < game.SCREEN_HEIGHT: self.rect.y += 5 
+            if self.rect.x > game.SCREEN_WIDTH: self.rect.x -= 30
+            elif self.rect.x < 0: self.rect.x += 30
+            if self.rect.y > game.SCREEN_HEIGHT: self.rect.y -= 30
+            elif self.rect.y < 0: self.rect.y += 30
         
         # 난이도 nomal
         if game.gameMode == "nomal":
@@ -237,7 +240,7 @@ class Game:
         self.gameTime = 60
         self.userHistory = False
         
-        ## user 관리 파일을 열어서 최고 점수를 불러온다.
+        ## user 관리 파일을 유저의 열어서 최고 점수를 불러온다.
         for user in open("User/userInfo.txt", "r", encoding="UTF-8"):
             user = user.split()
             if self.userName == user[0]:
@@ -277,7 +280,7 @@ class Game:
                     if self.settings_modeButton.pressed(event.pos) == True:
                         self.gameSettingsModeSelect()
                     elif self.settings_userButton.pressed(event.pos) == True:
-                        print("기능 미구현")
+                        self.gameSettingsPrintUserRanking()
                     elif self.run_menuCancelButton.pressed(event.pos) == True:
                         self.introScreen()
 
@@ -327,6 +330,46 @@ class Game:
 
             pygame.display.update()
 
+    ## 유저 랭킹 출력
+    def gameSettingsPrintUserRanking(self):
+
+        STOP = True
+        self.SCREEN.blit(self.settings_userRanking, self.settings_userRankingInfo[1])
+        
+        ## 유저 정보 열람
+        userRank = []
+        for user in open("User/userInfo.txt", "r", encoding="UTF-8"):
+            user = user.split()
+            if len(userRank) == 0:
+                userRank.append(user)
+            else:
+                for rankCnt in range(len(userRank)):
+                    if int(userRank[rankCnt][1]) < int(user[1]):
+                        userRank.insert(rankCnt, user)
+                        if len(userRank) > 10: userRank.pop()
+                        break
+                        
+        while STOP:
+            self.SCREEN.blit(self.run_menuButton.button, self.run_menuButtonInfo[1])
+
+            for rank in range(len(userRank)):
+                if rank == 0:
+                    self.textHelpper(f"{rank+1}st {userRank[rank][0]} : {userRank[rank][1]}", 35, GOLD, self.SCREEN_WIDTH/2, self.SCREEN_WIDTH*0.07*(rank+4))
+                elif rank == 1:
+                    self.textHelpper(f"{rank+1}st {userRank[rank][0]} : {userRank[rank][1]}", 33, SILVER, self.SCREEN_WIDTH/2, self.SCREEN_WIDTH*0.07*(rank+4))
+                elif rank == 2:
+                    self.textHelpper(f"{rank+1}st {userRank[rank][0]} : {userRank[rank][1]}", 31, BRONZE, self.SCREEN_WIDTH/2, self.SCREEN_WIDTH*0.07*(rank+4))
+                else:
+                    self.textHelpper(f"{rank+1}st {userRank[rank][0]} : {userRank[rank][1]}", 20, BLACK, self.SCREEN_WIDTH/2, self.SCREEN_WIDTH*0.07*(rank+4))
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.quitGame()
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    if self.run_menuButton.pressed(event.pos) == True:
+                        self.introScreen()
+
+            pygame.display.update()
+
     
 
     ########### 게임 요소 ###########
@@ -344,7 +387,7 @@ class Game:
         self.settings_modeNomalButtonInfo = ["Images/settings_modeButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
         self.settings_modeHardButtonInfo = ["Images/settings_userButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]   
 
-        self.settings_userRankingButtonInfo = ["Images/settings_user"]
+        self.settings_userRankingInfo = ["Images/settings_userInfoScreen.png", [0, 0], (self.SCREEN_WIDTH, self.SCREEN_HEIGHT)]
 
         self.run_menuButtonInfo = ["Images/run_menuButton.png", [self.SCREEN_WIDTH-RUN_BUTTON_SMALL_WIDTH , 0], (RUN_BUTTON_SMALL_WIDTH, RUN_BUTTON_SMALL_HEIGHT)]
         self.run_menuToIntroButtonInfo = ["Images/run_menuToIntroButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
@@ -368,7 +411,8 @@ class Game:
         self.imgs_run_heart2 = pygame.transform.scale(pygame.image.load(self.run_lifeInfo[0][1]), self.run_lifeInfo[2])
         self.imgs_run_heart3 = pygame.transform.scale(pygame.image.load(self.run_lifeInfo[0][2]), self.run_lifeInfo[2])
         self.imgs_run_fire = pygame.transform.scale(pygame.image.load(self.run_fireInfo[0]), self.run_fireInfo[2])
-        
+        self.settings_userRanking = pygame.transform.scale(pygame.image.load(self.settings_userRankingInfo[0]), self.settings_userRankingInfo[2])
+            
 
     def buttons_generate(self):
         self.intro_gameStartButton = Button(self.intro_gameStartButtonInfo[0], self.intro_gameStartButtonInfo[1][0], self.intro_gameStartButtonInfo[1][1], self.intro_gameStartButtonInfo[2][0], self.intro_gameStartButtonInfo[2][1]) # 인트로 게임 시작 버튼 생성
@@ -404,7 +448,6 @@ class Game:
 
     
 
-            
     ########## 게임 실행 ##########
     def quitGame(self):
         STOP = True
@@ -464,8 +507,6 @@ class Game:
 
     
 
-                        
-
     ########## 게임 인트로 ##########
     def introScreen(self):
         intro = True
@@ -503,7 +544,10 @@ class Game:
 
             ## 인트로 멘트
             self.gameUserNameFont = pygame.font.SysFont( 'impact', 30+ changeColorAndSize[cntForTimeSlow%10]*2, False, False)
-            self.gameUserNameText = self.gameUserNameFont.render(f"Hungry {self.userName}", True, (changeColorAndSize[cntForTimeSlow%10]*10+60 ,0 ,changeColorAndSize[cntForTimeSlow%10]*20 ))
+            if self.userHistory:
+                self.gameUserNameText = self.gameUserNameFont.render(f"hi, {self.userName}", True, (changeColorAndSize[cntForTimeSlow%10]*10+60 ,0 ,changeColorAndSize[cntForTimeSlow%10]*20 ))
+            else:
+                self.gameUserNameText = self.gameUserNameFont.render(f"Welcome {self.userName}", True, (changeColorAndSize[cntForTimeSlow%10]*10+60 ,0 ,changeColorAndSize[cntForTimeSlow%10]*20 ))
             self.gameUserNameRect = self.gameUserNameText.get_rect()
             self.SCREEN.blit(self.gameUserNameText, [self.SCREEN_WIDTH/2 - self.gameUserNameRect.w/2, self.SCREEN_HEIGHT - self.gameUserNameRect.h])
             
