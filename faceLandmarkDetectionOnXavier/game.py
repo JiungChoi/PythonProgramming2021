@@ -229,8 +229,50 @@ class MinusElement(FloatElement): # 실점 클래스(plus) : 부유물 객체로
             MinusElement.Minus_MODE = True
             game.life.minusLife(2)
             
+
+
+'''
+    <게임 객체의 메서드 구성>
+    ##### 게임 세팅
+       ## 게임 객체 생성자
+       ## 게임판 생성
+                    
+    ##### 게임 관리 도우미
+       ## 문자 출력 도우미
+
+    ##### 환경 설정
+       ## 메인
+       ## 게임 난이도 설정
+       ## 유저 랭킹      
+
+    ##### 게임 요소 관리
+       ## 이미지 파일 관리
+       ## 이미지 파일 생성
+       ## 버튼 생성
+       
+    ##### 게임 인트로
+       ## 인트로 메인 화면 출력
+
+    ##### 게임 실행
+       ## 먹은 음식 검출
+       ## 거부한 음식 검출
+       ## 게임 종료
+       ## 게임 요소 정리
+       ## 부유물 객체 생성
+       ## 식사, 시간, 이벤트 체크
+       ## 게임 시작
+       ## 게임 프로그램 실행
+
+    ##### 게임 프로그램 종료
+       ## 저장 및 종료
+'''
+
+
+
 class Game:
-    def __init__(self): # 게임 객체를 생성했을 때
+    ########## 게임 세팅 ##########
+    ## 게임 세팅 : 게임 객체의 생성자 
+    def __init__(self): 
         self.userName = input("Insert your name in english : ") # 유저의 이름을 입력받음
         self.userBestScore = 0
         self.SCREEN_WIDTH = SCREEN_WIDTH_DEFAULT
@@ -240,12 +282,27 @@ class Game:
         self.gameTime = 60
         self.userHistory = False
         
-        ## user 관리 파일을 유저의 열어서 최고 점수를 불러온다.
+        # user 관리 파일을 유저의 열어서 최고 점수를 불러온다.
         for user in open("User/userInfo.txt", "r", encoding="UTF-8"):
             user = user.split()
             if self.userName == user[0]:
                 self.userBestScore = user[1]
                 self.userHistory = True
+
+    ## 게임 세팅 : 게임판 객체 생성
+    def gameBoard(self):
+        self.img = pygame.image.load(PRESENT_FRAME_WRITE_PATH)
+        self.img = pygame.transform.scale(self.img, (self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
+
+
+    ########## 게임 관리 도우미 ##########
+    ## 게임 관리 도우미: 문자 출력 도우미
+    def textHelpper(self, TEXT, SIZE, COLOR, X, Y):
+        self.gameFont = pygame.font.SysFont( 'impact', SIZE, False, False)
+        self.gameText = self.gameFont.render(f"{TEXT}", True, COLOR)
+        self.gameTextRect = self.gameText.get_rect() 
+        self.SCREEN.blit(self.gameText, [X - self.gameTextRect.w/2, Y - self.gameTextRect.h/2])
+
 
     ########### 환경 설정 ###########
     ## 환경 설정 메인
@@ -284,8 +341,7 @@ class Game:
                     elif self.run_menuCancelButton.pressed(event.pos) == True:
                         self.introScreen()
 
-
-    ## 게임 난이도 설정
+    ## 환경 설정 : 게임 난이도 설정
     def gameSettingsModeSelect(self):
         STOP = True
         self.SCREEN.blit(self.imgs_intro_gameScreenInfo, self.intro_gameScreenInfo[1])
@@ -330,9 +386,8 @@ class Game:
 
             pygame.display.update()
 
-    ## 유저 랭킹 출력
+    ## 환경 설정 : 유저 랭킹 출력
     def gameSettingsPrintUserRanking(self):
-
         STOP = True
         self.SCREEN.blit(self.settings_userRanking, self.settings_userRankingInfo[1])
         
@@ -347,8 +402,7 @@ class Game:
                     if int(userRank[rankCnt][1]) < int(user[1]):
                         userRank.insert(rankCnt, user)
                         if len(userRank) > 10: userRank.pop()
-                        break
-                        
+                        break         
         while STOP:
             self.SCREEN.blit(self.run_menuButton.button, self.run_menuButtonInfo[1])
 
@@ -370,10 +424,10 @@ class Game:
 
             pygame.display.update()
 
-    
 
-    ########### 게임 요소 ###########
-    def gameFactor(self): # 이미지 파일들의 정보를 관리 : [경로, [x,y], (width, height))]
+    ########### 게임 요소 관리 ###########
+    ## 게임 요소 관리 : 이미지 파일들의 정보를 관리 ... [경로, [x,y], (width, height))]
+    def gameFactor(self): 
         self.intro_gameScreenInfo = ["Images/intro_gameScreen.png", [0, 0] , (self.SCREEN_WIDTH,self.SCREEN_HEIGHT)]
         self.intro_chefInfo = ["Images/chef.png", [self.SCREEN_WIDTH/2 - 0.5*self.SCREEN_WIDTH/1.6, self.SCREEN_HEIGHT- self.SCREEN_HEIGHT/2], (self.SCREEN_WIDTH/1.6, self.SCREEN_HEIGHT/2)]
         self.intro_gameStartButtonInfo = ["Images/intro_gameStrartButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2 - 2*INTRO_BUTTON_LARGE_HEIGHT ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
@@ -397,13 +451,13 @@ class Game:
         self.run_yesButtonInfo = ["Images/run_yesButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
         self.run_noButtonInfo = ["Images/run_noButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2 ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
         self.run_fireInfo = ["Images/fire.png", [0, 0], (RUN_BUTTON_FIRE_WIDTH, RUN_BUTTON_FIRE_HEIGHT)]
+        self.run_bandInfo = ["Images/band.png", [0, 0], (RUN_BUTTON_FIRE_WIDTH, RUN_BUTTON_FIRE_HEIGHT)]
         
-
-
         ## Game의 부유물 객체 관리
         self.run_plusElementInfo = [["Images/chicken.png", "Images/beef.png", "Images/sushi.png", "Images/goldApple.png","Images/medicine.png"], [0, 0], (RUN_BUTTON_MID_WIDTH, RUN_BUTTON_MID_HEIGHT)]
         self.run_minusElementInfo = [["Images/cucumber.png","Images/redMushroom.png"], [0, 0] , (RUN_BUTTON_MID_WIDTH, RUN_BUTTON_MID_HEIGHT)]
 
+    ## 게임 요소 관리 : 파이게임 이미지 객체 생성
     def getImgs(self):
         self.imgs_intro_gameScreenInfo = pygame.transform.scale(pygame.image.load(self.intro_gameScreenInfo[0]), self.intro_gameScreenInfo[2])
         self.imgs_intro_chefInfo = pygame.transform.scale(pygame.image.load(self.intro_chefInfo[0]), self.intro_chefInfo[2])
@@ -412,8 +466,9 @@ class Game:
         self.imgs_run_heart3 = pygame.transform.scale(pygame.image.load(self.run_lifeInfo[0][2]), self.run_lifeInfo[2])
         self.imgs_run_fire = pygame.transform.scale(pygame.image.load(self.run_fireInfo[0]), self.run_fireInfo[2])
         self.settings_userRanking = pygame.transform.scale(pygame.image.load(self.settings_userRankingInfo[0]), self.settings_userRankingInfo[2])
-            
+        self.imgs_run_band = pygame.transform.scale(pygame.image.load(self.run_bandInfo[0]), self.run_bandInfo[2])
 
+    ## 게임 요소 관리 : 파이게임 버튼 객체 생성
     def buttons_generate(self):
         self.intro_gameStartButton = Button(self.intro_gameStartButtonInfo[0], self.intro_gameStartButtonInfo[1][0], self.intro_gameStartButtonInfo[1][1], self.intro_gameStartButtonInfo[2][0], self.intro_gameStartButtonInfo[2][1]) # 인트로 게임 시작 버튼 생성
         self.intro_gameSettingsButton = Button(self.intro_gameSettingsButtonInfo[0], self.intro_gameSettingsButtonInfo[1][0], self.intro_gameSettingsButtonInfo[1][1], self.intro_gameSettingsButtonInfo[2][0], self.intro_gameSettingsButtonInfo[2][1]) #인트로 게임 설정 버튼 생성
@@ -433,81 +488,10 @@ class Game:
         self.settings_modeNomalButton = Button(self.settings_modeNomalButtonInfo[0], self.settings_modeNomalButtonInfo[1][0], self.settings_modeNomalButtonInfo[1][1], self.settings_modeNomalButtonInfo[2][0], self.settings_modeNomalButtonInfo[2][1]) #인트로 게임 설정 버튼 생성
         self.settings_modeHardButton = Button(self.settings_modeHardButtonInfo[0], self.settings_modeHardButtonInfo[1][0], self.settings_modeHardButtonInfo[1][1], self.settings_modeHardButtonInfo[2][0], self.settings_modeHardButtonInfo[2][1] )
         self.settings_menuCancelButton = Button(self.run_menuCancelButtonInfo[0], self.run_menuCancelButtonInfo[1][0], self.run_menuCancelButtonInfo[1][1]+self.run_menuCancelButtonInfo[2][1], self.run_menuCancelButtonInfo[2][0], self.run_menuCancelButtonInfo[2][1] )
-        
-
-    ########## 게임 세팅 ##########
-    def gameBoard(self):
-        self.img = pygame.image.load(PRESENT_FRAME_WRITE_PATH)
-        self.img = pygame.transform.scale(self.img, (self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
-
-    def textHelpper(self, TEXT, SIZE, COLOR, X, Y):
-        self.gameFont = pygame.font.SysFont( 'impact', SIZE, False, False)
-        self.gameText = self.gameFont.render(f"{TEXT}", True, COLOR)
-        self.gameTextRect = self.gameText.get_rect() 
-        self.SCREEN.blit(self.gameText, [X - self.gameTextRect.w/2, Y - self.gameTextRect.h/2])
 
     
-
-    ########## 게임 실행 ##########
-    def quitGame(self):
-        STOP = True
-        while STOP:
-            pygame.draw.rect(self.SCREEN, BLACK, [0, 0, self.SCREEN_WIDTH, self.SCREEN_HEIGHT])
-            self.textHelpper("SAVE OR NOT?", 40, WHITE, self.SCREEN_WIDTH/2, self.SCREEN_WIDTH*0.1)
-            self.textHelpper(f"Your Best Score : {self.userBestScore}", 20, WHITE, self.SCREEN_WIDTH/2, self.SCREEN_WIDTH*0.2)
-            self.SCREEN.blit(self.run_noButton.button, self.run_noButtonInfo[1])
-            self.SCREEN.blit(self.run_yesButton.button, self.run_yesButtonInfo[1])
-            ## 점수 객체 화면 출력
-            
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.quitGame()
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if self.run_yesButton.pressed(event.pos) == True:
-                        self.run_yesButton.switchImg("Images/run_yesButton_pressed.png")
-                    elif self.run_noButton.pressed(event.pos) == True:
-                        self.run_noButton.switchImg("Images/run_noButton_pressed.png")
-
-                elif event.type == pygame.MOUSEBUTTONUP:
-                    pauseTime = time.time()
-                    self.run_yesButton.switchImg("Images/run_yesButton.png")
-                    self.run_noButton.switchImg("Images/run_noButton.png")
-
-                    if self.run_yesButton.pressed(event.pos) == True:
-                        ## user 관리 파일에 유저의 최고점수를 저장한다.
-                        print(self.userHistory)
-                        if self.userHistory:
-                            file = open("User/userInfo.txt", "r", encoding="UTF-8")
-                            edit_file = []
-                            
-                            for user in file:
-                                user = user.split()
-                                if self.userName != user[0]:
-                                    edit_file.append(f"{user[0]} {user[1]}\n")
-                                
-                            file = open("User/userInfo.txt", "w", encoding="UTF-8")
-                            file.write(f"{self.userName} {self.userBestScore}\n")
-                            file = open("User/userInfo.txt", "a", encoding="UTF-8")
-                            for userInfo in edit_file:
-                                file.write(userInfo)
-                            STOP = False
-
-                        else :
-                            STOP = False
-                            file = open("User/userInfo.txt", "a", encoding="UTF-8")
-                            file.write(f"{self.userName} {self.userBestScore}\n")
-                            STOP = False
-
-                    elif self.run_noButton.pressed(event.pos) == True:
-                        STOP = False
-            pygame.display.update()
-        
-        pygame.quit()
-        sys.exit()
-
-    
-
     ########## 게임 인트로 ##########
+    ## 게임 인트로: 인트로 메인 화면
     def introScreen(self):
         intro = True
         changeColorAndSize = [0, 1, 2, 3, 4, 5, 4, 3, 2, 1]
@@ -565,7 +549,8 @@ class Game:
             pygame.display.update()
             self.clock.tick(15)
 
-    ######## 게임 스크린 ########
+    ########## 게임 실행 ##########
+    ## 게임 실행: 먹은 음식 검출
     def isInYourMouth(self, isPlusElement, points, element): # points: x*1.1, y*1.25
         if isPlusElement:
             if ((points[55][1]*1.25 - points[50][1]*1.25) > 50 and points[58][0]*1.1>(element.rect.x + element.rect.w/2)>points[62][0]*1.1) and (points[50][1]*1.25<(element.rect.y+ element.rect.h/2)<points[55][1]*1.25): 
@@ -575,12 +560,13 @@ class Game:
                 return True
         return False
     
+    ## 게임 실행: 거부한 음식 검출
     def rejectOnYourMouth(self, points, element):
         if (points[55][1]*1.25 - points[50][1]*1.25 < 35) and (points[58][0]*1.1>element.rect.x + element.rect.w/2>points[62][0]*1.1) and ( (element.rect.y)<points[50][1]*1.25<(element.rect.y + element.rect.h)):
                 return True
         return False
 
-    ## GAME Finsh 메서드 오버로딩
+    ## 게임 실행: 게임 종료
     def gameFinish(self, TYPE):
         STOP = True
         while STOP:
@@ -625,13 +611,16 @@ class Game:
                         
             pygame.display.update()
 
+    ## 게임 실행: 게임 요소 정리
     def gameFactorClear(self):
         STOP = False
         PlusElement.DOUBLE_MODE = False
+        MinusElement.Minus_MODE = False
         self.floatElements = [[], []]
         self.life.life = 3
         self.score.score = 0
-        
+    
+    ## 게임 실행: 부유물 객체 생성
     def floatterGenerotr(self):
         if self.gameMode == "easy":
             ## 부유물 객체의 생성 [plus : minus = 8 : 2]
@@ -677,8 +666,8 @@ class Game:
                      self.floatElements[1].append(MinusElement(self.run_minusElementInfo[0][1], self.run_minusElementInfo[2][0], self.run_minusElementInfo[2][1]))
                 elif 90<=plusOrMinus<95:
                     self.floatElements[0].append(PlusElement(self.run_plusElementInfo[0][4], self.run_plusElementInfo[2][0], self.run_plusElementInfo[2][1]))
-            
-
+    
+    ## 게임 실행: 식사, 시간, 이벤트 체크
     def eatChecker(self):
         ## 먹은지 안 먹은지 주기적으로 검출
         for element in self.floatElements[0]:
@@ -695,6 +684,7 @@ class Game:
                 self.floatElements[1].remove(element)
             if self.rejectOnYourMouth(self.points, element):
                 self.floatElements[1].remove(element)
+
     def timeChecker(self): 
         ## 시간 체크
         # 타임오버
@@ -743,6 +733,7 @@ class Game:
                                     
                         pygame.display.update()
 
+    ## 게임 실행: 게임 시작 (메인화면)
     def gameStart(self):
         STOP = True
         self.startPeverTime = 0
@@ -782,6 +773,9 @@ class Game:
             if PlusElement.DOUBLE_MODE:
                 game.SCREEN.blit(self.imgs_run_fire, [points[67][0], points[67][1]*1.1])
                 game.SCREEN.blit(self.imgs_run_fire, [points[66][0], points[66][1]*1.1])
+            if MinusElement.Minus_MODE:
+                game.SCREEN.blit(self.imgs_run_band, [points[67][0], points[67][1]*1.1])
+                game.SCREEN.blit(self.imgs_run_band, [points[66][0], points[66][1]*1.1])
             
             ## 점수 객체 화면 출력
             self.gameScoreFont = pygame.font.SysFont( 'impact', 40, False, False)
@@ -816,7 +810,7 @@ class Game:
 
             pygame.display.update()
 
-    ######## 게임 프로그램 실행 ########
+    ## 게임 실행: 게임 프로그램 실행
     def run(self):
         pygame.init() # 파이게임 라이브러리 초기 세팅
         self.clock = pygame.time.Clock() # timmer 사용을 위한 객체 생성 
@@ -830,13 +824,69 @@ class Game:
         self.event = pygame.event.poll() # 이벤트 객체 생성
         self.score = Score()
         
-
-
-        ## 게임 실행 첫 화면은 인트로로 실행
+        # 게임 실행 첫 화면은 인트로로 실행
         self.introScreen()
         
+
+    ########## 게임 프로그램 종료 ##########
+    ## 게임 프로그램 종료 : 저장 및 종료
+    def quitGame(self):
+        STOP = True
+        while STOP:
+            pygame.draw.rect(self.SCREEN, BLACK, [0, 0, self.SCREEN_WIDTH, self.SCREEN_HEIGHT])
+            self.textHelpper("SAVE OR NOT?", 40, WHITE, self.SCREEN_WIDTH/2, self.SCREEN_WIDTH*0.1)
+            self.textHelpper(f"Your Best Score : {self.userBestScore}", 20, WHITE, self.SCREEN_WIDTH/2, self.SCREEN_WIDTH*0.2)
+            self.SCREEN.blit(self.run_noButton.button, self.run_noButtonInfo[1])
+            self.SCREEN.blit(self.run_yesButton.button, self.run_yesButtonInfo[1])
+            ## 점수 객체 화면 출력
             
-            
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.quitGame()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.run_yesButton.pressed(event.pos) == True:
+                        self.run_yesButton.switchImg("Images/run_yesButton_pressed.png")
+                    elif self.run_noButton.pressed(event.pos) == True:
+                        self.run_noButton.switchImg("Images/run_noButton_pressed.png")
+
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    pauseTime = time.time()
+                    self.run_yesButton.switchImg("Images/run_yesButton.png")
+                    self.run_noButton.switchImg("Images/run_noButton.png")
+
+                    if self.run_yesButton.pressed(event.pos) == True:
+                        ## user 관리 파일에 유저의 최고점수를 저장한다.
+                        print(self.userHistory)
+                        if self.userHistory:
+                            file = open("User/userInfo.txt", "r", encoding="UTF-8")
+                            edit_file = []
+                            
+                            for user in file:
+                                user = user.split()
+                                if self.userName != user[0]:
+                                    edit_file.append(f"{user[0]} {user[1]}\n")
+                                
+                            file = open("User/userInfo.txt", "w", encoding="UTF-8")
+                            file.write(f"{self.userName} {self.userBestScore}\n")
+                            file = open("User/userInfo.txt", "a", encoding="UTF-8")
+                            for userInfo in edit_file:
+                                file.write(userInfo)
+                            STOP = False
+
+                        else :
+                            STOP = False
+                            file = open("User/userInfo.txt", "a", encoding="UTF-8")
+                            file.write(f"{self.userName} {self.userBestScore}\n")
+                            STOP = False
+
+                    elif self.run_noButton.pressed(event.pos) == True:
+                        STOP = False
+            pygame.display.update()
+        
+        pygame.quit()
+        sys.exit()
+    
+  
 if __name__ == "__main__":
     # generte the game
     print("Welcome to our game !!")
