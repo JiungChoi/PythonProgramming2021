@@ -52,12 +52,12 @@ class Score():
     def upScore(self, value):
         if PlusElement.DOUBLE_MODE == True:
             if MinusElement.Minus_MODE == True:
-                self.score += 2*0.7*value
+                self.score += int(2*0.7*value)
             else:
-                self.score += 2*value
+                self.score += int(2*value)
         else: 
             if MinusElement.Minus_MODE == True:
-                self.score += 0.7*value
+                self.score += int(0.7*value)
             else:
                 self.score += value 
 
@@ -117,8 +117,10 @@ class FloatElement: # 부유물 클래스: 점수 클래스(plus)와, 실점(min
             self.rect.x += random.randrange(31) - 15 # move : -15 ~ 15 
             self.rect.y += random.randrange(11) - 5 # move : -5 ~ 5
             # 충돌에대한 방향 보정
-            if self.rect.x >= game.SCREEN_WIDTH: self.rect.x -= 15
-            if self.rect.y >= game.SCREEN_HEIGHT: self.rect.y -= 5 
+            if self.rect.x > game.SCREEN_WIDTH: self.rect.x -= 15
+            elif self.rect.y < game.SCREEN_WIDTH: self.rect.x += 15
+            if self.rect.y > game.SCREEN_HEIGHT: self.rect.y -= 5 
+            elif self.rect.y < game.SCREEN_HEIGHT: self.rect.y += 5 
         
         # 난이도 nomal
         if game.gameMode == "nomal":
@@ -183,7 +185,6 @@ class FloatElement: # 부유물 클래스: 점수 클래스(plus)와, 실점(min
                 self.moveDir[1] = 1
 
 
-        
 class PlusElement(FloatElement): # 점수 클래스(plus) : 부유물 객체로 부터 상속 받는다.
     DOUBLE_MODE = False
     def __init__(self, Floatter_IMG_PATH, w, h):
@@ -206,7 +207,7 @@ class PlusElement(FloatElement): # 점수 클래스(plus) : 부유물 객체로 
                 MinusElement.Minus_MODE = False
             game.life.plusLife(1)
         return False
-            
+
 
 class MinusElement(FloatElement): # 실점 클래스(plus) : 부유물 객체로 부터 상속 받는다.
     Minus_MODE = False
@@ -225,9 +226,6 @@ class MinusElement(FloatElement): # 실점 클래스(plus) : 부유물 객체로
             MinusElement.Minus_MODE = True
             game.life.minusLife(2)
             
-
-        
-
 class Game:
     def __init__(self): # 게임 객체를 생성했을 때
         self.userName = input("Insert your name in english : ") # 유저의 이름을 입력받음
@@ -346,6 +344,8 @@ class Game:
         self.settings_modeNomalButtonInfo = ["Images/settings_modeButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
         self.settings_modeHardButtonInfo = ["Images/settings_userButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]   
 
+        self.settings_userRankingButtonInfo = ["Images/settings_user"]
+
         self.run_menuButtonInfo = ["Images/run_menuButton.png", [self.SCREEN_WIDTH-RUN_BUTTON_SMALL_WIDTH , 0], (RUN_BUTTON_SMALL_WIDTH, RUN_BUTTON_SMALL_HEIGHT)]
         self.run_menuToIntroButtonInfo = ["Images/run_menuToIntroButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
         self.run_menuCancelButtonInfo = ["Images/run_menuCancelButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2  ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
@@ -354,6 +354,7 @@ class Game:
         self.run_yesButtonInfo = ["Images/run_yesButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
         self.run_noButtonInfo = ["Images/run_noButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2 ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
         self.run_fireInfo = ["Images/fire.png", [0, 0], (RUN_BUTTON_FIRE_WIDTH, RUN_BUTTON_FIRE_HEIGHT)]
+        
 
 
         ## Game의 부유물 객체 관리
