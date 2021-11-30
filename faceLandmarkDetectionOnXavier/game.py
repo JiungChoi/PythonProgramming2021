@@ -5,6 +5,7 @@ import os, sys, time, random
 
 PRESENT_FRAME_WRITE_PATH = "Jiung\jiung.png"
 
+## 게임 요소들의 크기를 상수로 정의
 SCREEN_WIDTH_DEFAULT = 600
 SCREEN_HEIGHT_DEFAULT = 600
 INTRO_BUTTON_LARGE_WIDTH = SCREEN_WIDTH_DEFAULT*0.3
@@ -16,17 +17,18 @@ RUN_BUTTON_SMALL_HEIGHT = SCREEN_HEIGHT_DEFAULT*0.15
 RUN_BUTTON_FIRE_WIDTH = SCREEN_WIDTH_DEFAULT*0.1
 RUN_BUTTON_FIRE_HEIGHT = SCREEN_HEIGHT_DEFAULT*0.1
 
-## Plus Value
+## Plus Value : 게임에 돌아다니는 부유물 객체의 점수를 정의
 SCORE_CHICKEN = 1000
 SCORE_BEEF = 2000
 SCORE_SUSHI = 3000
 
-## Minus Value
+## Minus Value : 게임에 돌아다니는 부유물 객체의 점수를 정의
 SCORE_CUCUMBER = 500
 
+## 게임 일시 정지에 사용되는 Flag
 STOP = True
 
-#### COLOR ####
+## COLOR : 게임에 사용될 색깔 값 상수로 정의 
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
@@ -36,6 +38,7 @@ GOLD = (255, 215, 0)
 SILVER = (192, 192, 192)
 BRONZE = (153, 102, 0)
 
+## 유저의 생명을 관리하는 Life 클래스
 class Life():
     def __init__(self):
         self.life = 3
@@ -48,47 +51,50 @@ class Life():
     def minusLife (self, value):
         self.life -= value
     
-    
+
+## 유저의 점수를 관리하는 Score 클래스
 class Score():
     def __init__(self):
         self.score = 0
-    def upScore(self, value):
-        if PlusElement.DOUBLE_MODE == True:
-            if MinusElement.Minus_MODE == True:
-                self.score += int(2*0.7*value)
+
+    def upScore(self, value): # 현재 게임 모드에 따라서 점수가 반영 된다.
+        if PlusElement.DOUBLE_MODE == True: 
+            if MinusElement.Minus_MODE == True: 
+                self.score += int(2*0.7*value) 
             else:
-                self.score += int(2*value)
-        else: 
-            if MinusElement.Minus_MODE == True:
+                self.score += int(2*value) 
+        else:  
+            if MinusElement.Minus_MODE == True: 
                 self.score += int(0.7*value)
-            else:
+            else: 
                 self.score += value 
 
-
-    def downScore(self, value):
+    def downScore(self, value): # 현재 게임 모드에 따라서 점수가 반영 된다.
         if (self.score - value) > 0:
             self.score -= value
         else:
             self.score = 0
 
+## 게임에 사용되는 버튼 클래스
 class Button():
-    def __init__(self, BUTTON_IMG_PATH, x, y, w, h):
+    def __init__(self, BUTTON_IMG_PATH, x, y, w, h): # 버튼 클래스는 생성과 동시에 경로를 포함한 이미지 정보를 통해 파이게임에서 사용 가능한 이미지 객체로 생성
         self.button = pygame.image.load(BUTTON_IMG_PATH)
         self.button = pygame.transform.scale(self.button,(w, h))
         self.rect = self.button.get_rect()
         self.rect.x = x
         self.rect.y = y
 
-    def switchImg(self, imgPath):
+    def switchImg(self, imgPath): # 눌렀을 때 이미지가 변환 되도록 해줄 메서드
         self.button = self.button = pygame.image.load(imgPath)
         self.button = pygame.transform.scale(self.button, (self.rect.w, self.rect.h))
         
-    def pressed(self, mouse):
+    def pressed(self, mouse): # 버튼이 눌린지 아닌지 검출해줄 메서드
         if self.rect.collidepoint(mouse) == True:
             return True
 
-class FloatElement: # 부유물 클래스: 점수 클래스(plus)와, 실점(minus) 클래스로 상속한다. 
-    moveDir = [[0, 0], [0, 1], [1, 0], [1, 1]] # 부유물 클래스의 방향을 정적변수로 선언
+## 부유물 클래스: 점수 클래스(plus)와, 실점(minus) 클래스로 상속한다.
+class FloatElement: 
+    moveDir = [[0, 0], [0, 1], [1, 0], [1, 1]] # 부유물 클래스의 이동 방향을 정적변수로 선언
     
     def __init__(self,Floatter_IMG_PATH, w, h):
         self.floatter = pygame.image.load(Floatter_IMG_PATH)
@@ -187,8 +193,8 @@ class FloatElement: # 부유물 클래스: 점수 클래스(plus)와, 실점(min
                 self.rect.y += 30
                 self.moveDir[1] = 1
 
-
-class PlusElement(FloatElement): # 점수 클래스(plus) : 부유물 객체로 부터 상속 받는다.
+# 부유물 클래스(plus, 점수 획득요소) : 부유물 객체로 부터 상속 받는다.
+class PlusElement(FloatElement): 
     DOUBLE_MODE = False
     def __init__(self, Floatter_IMG_PATH, w, h):
         super().__init__(Floatter_IMG_PATH, w, h) 
@@ -211,8 +217,8 @@ class PlusElement(FloatElement): # 점수 클래스(plus) : 부유물 객체로 
             game.life.plusLife(1)
         return False
 
-
-class MinusElement(FloatElement): # 실점 클래스(plus) : 부유물 객체로 부터 상속 받는다.
+# 부유물 클래스(minus, 실점 요소) : 부유물 객체로 부터 상속 받는다.
+class MinusElement(FloatElement):
     Minus_MODE = False
     def __init__(self, Floatter_IMG_PATH, w, h):
         super().__init__(Floatter_IMG_PATH, w, h)
@@ -452,7 +458,13 @@ class Game:
         self.run_noButtonInfo = ["Images/run_noButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2 ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
         self.run_fireInfo = ["Images/fire.png", [0, 0], (RUN_BUTTON_FIRE_WIDTH, RUN_BUTTON_FIRE_HEIGHT)]
         self.run_bandInfo = ["Images/band.png", [0, 0], (RUN_BUTTON_FIRE_WIDTH, RUN_BUTTON_FIRE_HEIGHT)]
-        
+        self.run_waitingScreenEasyInfo = ["Images/run_waitingScreenEasy.png", [0, 0], (self.SCREEN_WIDTH, self.SCREEN_HEIGHT)]
+        self.run_waitingScreenNomalInfo = ["Images/run_waitingScreenNomal.png", [0, 0], (self.SCREEN_WIDTH, self.SCREEN_HEIGHT)]
+        self.run_waitingScreenHardInfo = ["Images/run_waitingScreenHard.png", [0, 0], (self.SCREEN_WIDTH, self.SCREEN_HEIGHT)]
+
+
+
+
         ## Game의 부유물 객체 관리
         self.run_plusElementInfo = [["Images/chicken.png", "Images/beef.png", "Images/sushi.png", "Images/goldApple.png","Images/medicine.png"], [0, 0], (RUN_BUTTON_MID_WIDTH, RUN_BUTTON_MID_HEIGHT)]
         self.run_minusElementInfo = [["Images/cucumber.png","Images/redMushroom.png"], [0, 0] , (RUN_BUTTON_MID_WIDTH, RUN_BUTTON_MID_HEIGHT)]
@@ -467,6 +479,9 @@ class Game:
         self.imgs_run_fire = pygame.transform.scale(pygame.image.load(self.run_fireInfo[0]), self.run_fireInfo[2])
         self.settings_userRanking = pygame.transform.scale(pygame.image.load(self.settings_userRankingInfo[0]), self.settings_userRankingInfo[2])
         self.imgs_run_band = pygame.transform.scale(pygame.image.load(self.run_bandInfo[0]), self.run_bandInfo[2])
+        self.imgs_run_waitingScreenEasy = pygame.transform.scale(pygame.image.load(self.run_waitingScreenEasyInfo[0]), self.run_waitingScreenEasyInfo[2])
+        self.imgs_run_waitingScreenNomal = pygame.transform.scale(pygame.image.load(self.run_waitingScreenNomalInfo[0]), self.run_waitingScreenNomalInfo[2])
+        self.imgs_run_waitingScreenHard = pygame.transform.scale(pygame.image.load(self.run_waitingScreenHardInfo[0]), self.run_waitingScreenHardInfo[2])
 
     ## 게임 요소 관리 : 파이게임 버튼 객체 생성
     def buttons_generate(self):
@@ -741,12 +756,14 @@ class Game:
         for points in fc.run(visualize=1, max_threads=4, capture=0):
             self.points = points
             while STOP:
-                pygame.draw.rect(self.SCREEN, BLACK, [0, 0, self.SCREEN_WIDTH, self.SCREEN_HEIGHT])
+                if self.gameMode == "easy": self.SCREEN.blit(self.imgs_run_waitingScreenEasy, self.run_waitingScreenEasyInfo[1])
+                elif self.gameMode == "nomal": self.SCREEN.blit(self.imgs_run_waitingScreenNomal, self.run_waitingScreenNomalInfo[1])
+                elif self.gameMode == "hard": self.SCREEN.blit(self.imgs_run_waitingScreenHard, self.run_waitingScreenHardInfo[1])
+
                 self.gamePauseFont = pygame.font.SysFont( 'impact', 40, False, False)
                 self.gamePauseText = self.gamePauseFont.render("Press \"SpaceBar\" to Start Game ", True, WHITE)
                 self.gamePauseTextRect = self.gamePauseText.get_rect() 
-                self.SCREEN.blit(self.gamePauseText, [self.SCREEN_WIDTH/2 - self.gamePauseTextRect.w/2, self.SCREEN_HEIGHT/2 - self.gamePauseTextRect.h/2])
-
+                self.SCREEN.blit(self.gamePauseText, [self.SCREEN_WIDTH/2 - self.gamePauseTextRect.w/2, self.SCREEN_HEIGHT - self.gamePauseTextRect.h])
                 
                 pygame.display.update()
                 for event in pygame.event.get():
