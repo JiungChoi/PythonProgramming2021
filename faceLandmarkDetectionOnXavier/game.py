@@ -56,20 +56,21 @@ class Life():
 class Score():
     def __init__(self):
         self.score = 0
-
-    def upScore(self, value): # 현재 게임 모드에 따라서 점수가 반영 된다.
+    # 현재 게임 모드에 따라서 점수가 반영 된다.
+    def upScore(self, value): 
         if PlusElement.DOUBLE_MODE == True: 
             if MinusElement.Minus_MODE == True: 
                 self.score += int(2*0.7*value) 
             else:
                 self.score += int(2*value) 
-        else:  
+        else:
             if MinusElement.Minus_MODE == True: 
                 self.score += int(0.7*value)
             else: 
                 self.score += value 
-
-    def downScore(self, value): # 현재 게임 모드에 따라서 점수가 반영 된다.
+                
+    # 현재 게임 모드에 따라서 점수가 반영 된다.
+    def downScore(self, value): 
         if (self.score - value) > 0:
             self.score -= value
         else:
@@ -94,7 +95,8 @@ class Button():
 
 ## 부유물 클래스: 점수 클래스(plus)와, 실점(minus) 클래스로 상속한다.
 class FloatElement: 
-    moveDir = [[0, 0], [0, 1], [1, 0], [1, 1]] # 부유물 클래스의 이동 방향을 정적변수로 선언
+    # 부유물 클래스의 이동 방향을 정적변수로 선언
+    moveDir = [[0, 0], [0, 1], [1, 0], [1, 1]] 
     
     def __init__(self,Floatter_IMG_PATH, w, h):
         self.floatter = pygame.image.load(Floatter_IMG_PATH)
@@ -118,9 +120,9 @@ class FloatElement:
         elif Floatter_IMG_PATH == "Images/redMushroom.png":
             self.type = "redMushroom"
     
-    ## 모드에 따라 다른 이동
+    ## 난이도에 따라 다른 이동
     def randomMove(self):
-        
+
         # 난이도 easy
         if game.gameMode == "easy":
             self.rect.x += random.randrange(31) - 15 # move : -15 ~ 15 
@@ -227,10 +229,6 @@ class MinusElement(FloatElement):
         if self.type == "cucumber":
             game.score.downScore(SCORE_CUCUMBER) 
             game.life.minusLife(1)
-        elif self.type == "chicken":
-            game.score.upScore(SCORE_CHICKEN) 
-        elif self.type == "beef":
-            game.score.upScore(SCORE_BEEF) 
         elif self.type == "redMushroom":
             MinusElement.Minus_MODE = True
             game.life.minusLife(2)
@@ -442,11 +440,9 @@ class Game:
 
         self.settings_modeButtonInfo = ["Images/settings_modeButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2 - 2*INTRO_BUTTON_LARGE_HEIGHT ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
         self.settings_userButtonInfo = ["Images/settings_userButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2- INTRO_BUTTON_LARGE_HEIGHT], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]   
-
         self.settings_modeEasyButtonInfo = ["Images/settings_windowSettingsButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2 - 2*INTRO_BUTTON_LARGE_HEIGHT ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
         self.settings_modeNomalButtonInfo = ["Images/settings_modeButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT ], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]
         self.settings_modeHardButtonInfo = ["Images/settings_userButton.png", [self.SCREEN_WIDTH/2 - INTRO_BUTTON_LARGE_WIDTH/2, self.SCREEN_HEIGHT/2 - INTRO_BUTTON_LARGE_HEIGHT/2], (INTRO_BUTTON_LARGE_WIDTH, INTRO_BUTTON_LARGE_HEIGHT)]   
-
         self.settings_userRankingInfo = ["Images/settings_userInfoScreen.png", [0, 0], (self.SCREEN_WIDTH, self.SCREEN_HEIGHT)]
 
         self.run_menuButtonInfo = ["Images/run_menuButton.png", [self.SCREEN_WIDTH-RUN_BUTTON_SMALL_WIDTH , 0], (RUN_BUTTON_SMALL_WIDTH, RUN_BUTTON_SMALL_HEIGHT)]
@@ -461,8 +457,6 @@ class Game:
         self.run_waitingScreenEasyInfo = ["Images/run_waitingScreenEasy.png", [0, 0], (self.SCREEN_WIDTH, self.SCREEN_HEIGHT)]
         self.run_waitingScreenNomalInfo = ["Images/run_waitingScreenNomal.png", [0, 0], (self.SCREEN_WIDTH, self.SCREEN_HEIGHT)]
         self.run_waitingScreenHardInfo = ["Images/run_waitingScreenHard.png", [0, 0], (self.SCREEN_WIDTH, self.SCREEN_HEIGHT)]
-
-
 
 
         ## Game의 부유물 객체 관리
